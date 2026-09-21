@@ -1,0 +1,340 @@
+/* ==========================================================================
+   Club Penguin Journey - Igloo Likes AFK Booster Styles
+   Regra opsx-build: < 250 linhas, UI 100% autêntica, zero emojis.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap');
+
+:root {
+    --cp-blue-gradient: linear-gradient(180deg, #00a2f5 0%, #0088d8 50%, #0077c4 100%);
+    --cp-border-cyan: #00e5ff;
+    --cp-border-cyan-light: #66f3ff;
+    --cp-blue-dark: #004077;
+    --cp-blue-deep: #002d55;
+    --cp-pill-bg: #003b70;
+    --cp-yellow-check: #ffcc00;
+    --cp-font: 'Fredoka', 'Balsamiq Sans', 'Comic Sans MS', sans-serif;
+}
+
+/* Modal Flutuante */
+.cpj-booster-modal {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: 370px;
+    background: var(--cp-blue-gradient);
+    border: 3.5px solid var(--cp-border-cyan);
+    outline: 2px solid var(--cp-blue-dark);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 20, 60, 0.65), inset 0 2px 0 var(--cp-border-cyan-light);
+    font-family: var(--cp-font);
+    color: #ffffff;
+    user-select: none;
+    z-index: 2147483647;
+    padding: 16px 18px;
+    box-sizing: border-box;
+    display: block;
+}
+
+.cpj-booster-modal.cpj-closed {
+    display: none !important;
+}
+
+.cpj-booster-modal.minimized .cpj-modal-content {
+    display: none !important;
+}
+
+/* Botão Flutuante Permanente (Launcher) */
+.cpj-floating-launcher {
+    position: fixed !important;
+    top: 15px !important;
+    right: 15px !important;
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    background: linear-gradient(180deg, #00b4ff 0%, #006eb8 100%) !important;
+    border: 3px solid var(--cp-border-cyan) !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 2px 0 #7fe3ff !important;
+    z-index: 2147483646 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: transform 0.15s ease;
+}
+
+.cpj-floating-launcher:hover { transform: scale(1.1) !important; }
+
+/* Cabeçalho */
+.cpj-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(0, 229, 255, 0.35);
+    cursor: move;
+}
+
+.cpj-modal-title {
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #ffffff !important;
+    text-shadow: 
+        -1.5px -1.5px 0 #00305a,
+         1.5px -1.5px 0 #00305a,
+        -1.5px  1.5px 0 #00305a,
+         1.5px  1.5px 0 #00305a,
+         0 3px 6px rgba(0, 20, 50, 0.45) !important;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cpj-circle-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #00a8ea 0%, #006cb5 100%);
+    border: 2px solid var(--cp-border-cyan);
+    box-shadow: inset 0 1px 0 #7fe3ff, 0 2px 4px rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+.cpj-circle-btn:active { transform: scale(0.95); }
+
+/* Barra de Status */
+.cpj-status-bar {
+    background: var(--cp-pill-bg);
+    border: 2px solid var(--cp-border-cyan);
+    border-radius: 25px;
+    padding: 6px 14px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.cpj-status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ff4757;
+    border: 1.5px solid #ffffff;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.cpj-status-dot.active { background: #2ed573; box-shadow: 0 0 8px #2ed573; }
+
+/* Card de Likes e Meta */
+.cpj-likes-card {
+    background: linear-gradient(180deg, #004d8c 0%, #003666 100%);
+    border: 2.5px solid var(--cp-border-cyan);
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+}
+
+.cpj-likes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.cpj-percent-badge {
+    background: #002b4d;
+    border: 1.5px solid var(--cp-border-cyan);
+    border-radius: 12px;
+    padding: 2px 8px;
+    color: #00ffff;
+    font-size: 13px;
+}
+
+.cpj-numbers-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.cpj-number-box { display: flex; flex-direction: column; align-items: center; }
+
+.cpj-number-tag {
+    font-size: 11px;
+    color: #8edeff;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+/* Badge e Input de likes atuais do pinguim (detectado automaticamente ou digitado) */
+.cpj-likes-badge-val, .cpj-input-likes-pill {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 105px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    background: var(--cp-blue-deep) !important;
+    border: 2px solid #50d0ff !important;
+    border-radius: 18px !important;
+    color: #ffea79 !important;
+    font-family: var(--cp-font) !important;
+    font-size: 17px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    padding: 4px 8px !important;
+    outline: none !important;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.6) !important;
+    box-sizing: border-box !important;
+    line-height: normal !important;
+}
+
+.cpj-input-likes-pill:focus {
+    border-color: #ffea79 !important;
+    box-shadow: 0 0 8px rgba(255, 234, 121, 0.6) !important;
+}
+
+/* Input da Meta (Limpo, sem spinners) */
+.cpj-input-goal-pill {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 105px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    background: var(--cp-blue-deep) !important;
+    border: 2px solid var(--cp-border-cyan) !important;
+    border-radius: 18px !important;
+    color: #ffffff !important;
+    font-family: var(--cp-font) !important;
+    font-size: 17px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    padding: 4px 8px !important;
+    outline: none !important;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.6) !important;
+    box-sizing: border-box !important;
+    line-height: normal !important;
+}
+
+.cpj-input-goal-pill:focus {
+    border-color: #ffffff;
+    box-shadow: 0 0 8px var(--cp-border-cyan);
+}
+
+.cpj-input-goal-pill.has-error {
+    border-color: #ff4757 !important;
+    box-shadow: 0 0 8px #ff4757 !important;
+}
+
+/* Banner de Erro da Meta */
+.cpj-goal-error-banner {
+    background: rgba(255, 71, 87, 0.25);
+    border: 1.5px solid #ff4757;
+    border-radius: 8px;
+    padding: 5px 8px;
+    font-size: 11px;
+    color: #ffb8b8;
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: 700;
+    display: none;
+}
+
+/* Barra de Progresso */
+.cpj-progress-track {
+    width: 100%;
+    height: 22px;
+    background: #001f3f;
+    border: 2px solid var(--cp-border-cyan);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.cpj-progress-fill {
+    height: 100%;
+    background: linear-gradient(180deg, #00ffff 0%, #00b4d8 50%, #0077b6 100%);
+    border-radius: 12px;
+    transition: width 0.35s ease;
+}
+
+.cpj-progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    color: #e0f7ff;
+}
+
+/* Checkbox Amarelo */
+.cpj-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.cpj-checkbox-box {
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border: 2px solid #00284d;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cpj-checkbox-row.checked .cpj-checkbox-box { background: var(--cp-yellow-check); }
+.cpj-checkbox-row.checked .cpj-checkbox-box svg { display: block; }
+.cpj-checkbox-box svg { display: none; }
+
+/* Botões 3D */
+/* Botão Único 3D de Largura Total (Print 3) */
+.cpj-actions-row { display: flex; width: 100%; margin-top: 12px; }
+
+.cpj-btn-toggle {
+    width: 100% !important;
+    font-family: var(--cp-font) !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    border-radius: 22px !important;
+    padding: 10px 16px !important;
+    cursor: pointer !important;
+    text-transform: uppercase !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    transition: all 0.15s ease !important;
+}
+
+.cpj-btn-toggle.start {
+    background: linear-gradient(180deg, #00c6ff 0%, #0072ff 100%) !important;
+    box-shadow: inset 0 2px 0 #7fe3ff, 0 4px 0 #004080 !important;
+}
+
+.cpj-btn-toggle.stop {
+    background: linear-gradient(180deg, #ff6b6b 0%, #c0392b 100%) !important;
+    box-shadow: inset 0 2px 0 #ffaaaa, 0 4px 0 #801d12 !important;
+}
+
+.cpj-btn-toggle:active { transform: translateY(3px) !important; }

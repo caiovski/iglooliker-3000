@@ -1,0 +1,36 @@
+# Operating System Files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+.DS_Store
+
+# Editor & IDE Directories
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Node & Package Managers
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python Cache & Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary & Log Files
+*.log
+*.tmp
+*.bak
+.tempmediaStorage/
+scratch/

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IglooLiker 3000 - Preview Interativo</title>
+    <link rel="stylesheet" href="ui/styles.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #001020;
+            font-family: 'Fredoka', 'Balsamiq Sans', sans-serif;
+            position: relative;
+        }
+
+        /* Cenário de Fundo da Welcome Room */
+        .cpj-game-viewport {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('welcome room/CPJourney 2026-09-20T20_43_24.618Z.png');
+            background-size: cover;
+            background-position: center bottom;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Barra de Controle de Testes no Topo */
+        .preview-test-bar {
+            background: rgba(0, 20, 50, 0.88);
+            border-bottom: 2px solid #00e5ff;
+            color: #ffffff;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .preview-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #00e5ff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preview-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .test-btn {
+            background: #006cb5;
+            color: #ffffff;
+            border: 1.5px solid #00e5ff;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .test-btn:hover {
+            background: #0096e6;
+        }
+
+        /* Log de Chat Simulado (Canto Inferior Esquerdo) */
+        .simulated-chat-box {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            width: 360px;
+            height: 190px;
+            background: rgba(0, 28, 56, 0.9);
+            border: 2px solid #00e5ff;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            z-index: 1000;
+        }
+
+        .chat-box-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #00e5ff;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.3);
+            padding-bottom: 4px;
+        }
+
+        .chat-messages-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+            color: #e2f6ff;
+        }
+
+        .chat-entry {
+            background: rgba(0, 48, 88, 0.5);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border-left: 3px solid #00e5ff;
+            line-height: 1.3;
+        }
+
+        .chat-entry .time {
+            color: #8edeff;
+            font-size: 10px;
+            margin-right: 5px;
+        }
+
+        .chat-entry .author {
+            color: #ffcc00;
+            font-weight: 700;
+        }
+
+        /* Indicador de Dança no Cenário */
+        .dance-indicator {
+            position: absolute;
+            bottom: 35%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 30, 60, 0.85);
+            border: 2px solid #00e5ff;
+            border-radius: 20px;
+            padding: 8px 18px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            display: none;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
+            animation: pulseDance 1s infinite alternate;
+        }
+
+        @keyframes pulseDance {
+            from { transform: translateX(-50%) scale(1); }
+            to { transform: translateX(-50%) scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <div class="cpj-game-viewport">
+        <!-- Barra Superior de Controle do Preview -->
+        <div class="preview-test-bar">
+            <div class="preview-title">IglooLiker 3000 - Ambiente de Simulação Universal</div>
+            <div class="preview-controls">
+                <button class="test-btn" id="btn-toggle-room">Alternar Sala (Atual: Welcome Room)</button>
+                <button class="test-btn" id="btn-add-like">+1 Like Simulado</button>
+            </div>
+        </div>
+
+        <!-- Indicador de Dança -->
+        <div class="dance-indicator" id="dance-indicator">
+            Pinguim Dançando (Comando 'D' Ativado)
+        </div>
+
+        <!-- Log de Chat Simulado -->
+        <div class="simulated-chat-box">
+            <div class="chat-box-title">Chat do Jogo (Mensagens Enviadas em Segundo Plano)</div>
+            <div class="chat-messages-list" id="chat-list">
+                <div class="chat-entry">
+                    <span class="time">17:40</span>
+                    <span class="author">Sistema:</span> IglooLiker 3000 pronto e ativo.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts do Booster -->
+    <script>
+        window.__CPJ_PREVIEW_MODE__ = true;
+    </script>
+    <script src="ui/icons.js"></script>
+    <script src="core/state.js"></script>
+    <script src="core/engine.js"></script>
+    <script src="ui/components.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const state = new BoosterState();
+            state.set('isWelcomeRoom', true);
+            state.set('currentRoom', 'Welcome Room');
+
+            const engine = new BoosterEngine(state);
+            const ui = new BoosterUI(state, engine);
+            ui.render();
+
+            const chatList = document.getElementById('chat-list');
+            const danceIndicator = document.getElementById('dance-indicator');
+
+            // Escuta mensagens enviadas para exibir no chat simulado
+            state.subscribe((key, val) => {
+                if (key === 'lastSentMessage' && val) {
+                    const now = new Date();
+                    const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                    
+                    const item = document.createElement('div');
+                    item.className = 'chat-entry';
+                    item.innerHTML = `<span class="time">${timeStr}</span> <span class="author">Você:</span> ${val}`;
+                    chatList.appendChild(item);
+                    chatList.scrollTop = chatList.scrollHeight;
+                }
+
+                if (key === 'hasDanced') {
+                    danceIndicator.style.display = val ? 'block' : 'none';
+                }
+
+                if (key === 'isWelcomeRoom' && !val) {
+                    danceIndicator.style.display = 'none';
+                }
+            });
+
+            // Botão Alternar Sala
+            const btnRoom = document.getElementById('btn-toggle-room');
+            btnRoom.addEventListener('click', () => {
+                const current = state.get('isWelcomeRoom');
+                state.set('isWelcomeRoom', !current);
+                state.set('currentRoom', !current ? 'Welcome Room' : 'Town');
+                btnRoom.textContent = `Alternar Sala (Atual: ${!current ? 'Welcome Room' : 'Town'})`;
+            });
+
+            // Botão +1 Like Simulado
+            const btnLike = document.getElementById('btn-add-like');
+            btnLike.addEventListener('click', () => {
+                state.updateLikes(state.get('currentLikes') + 1);
+            });
+        });
+    </script>
+</body>
+</html>
