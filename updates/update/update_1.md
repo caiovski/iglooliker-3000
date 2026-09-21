@@ -16,13 +16,13 @@
 
 ---
 
-## 🎯 Executive Summary
+## Executive Summary
 
 The **Multi-Penguin Actions & Phrase Studio Suite** (Release `3.1.0`) elevates **IglooLiker 3000** from a single-account like booster into a full-fledged, multi-tab automation suite. Designed specifically for players managing multiple accounts (e.g., a primary broadcasting account and secondary AFK spectators), this update introduces complete per-tab state segregation, custom phrase management with active/inactive filtering, an anti-AFK wave engine, 8-way window resizing with adaptive typography, and bilingual (PT-BR / EN-USA) localization.
 
 ---
 
-## 🏗️ Architectural Overview & Data Flow
+## Architectural Overview & Data Flow
 
 ```mermaid
 graph TD
@@ -50,7 +50,7 @@ graph TD
 
 ---
 
-## 🧩 Key Engineering Deliverables
+## Key Engineering Deliverables
 
 ### 1. Multi-Tab State Segregation (`sessionStorage` vs `localStorage`)
 - **Isolated Per-Tab Execution (`sessionStorage`):**
@@ -63,7 +63,7 @@ graph TD
 ### 2. Phrases Studio Suite (CRUD & Toggle Eye Filter)
 - **Full Phrase CRUD:**
   - Create up to 6 custom phrases with inline character validation and slot counters (`Slots: N/6`).
-  - Inline phrase editing via modal prompt and one-click deletion (`✕`).
+  - Inline phrase editing via modal prompt and one-click deletion (`[X]`).
   - Added empty-field fallback prompt on `+ ADD` click, input autofocus, and <kbd>Enter</kbd> keypress submission.
 - **Active / Inactive Eye Toggle:**
   - Integrated custom SVG eye icon (`eyeClosed` = Active / in rotation, `eyeOpen` = Inactive / excluded).
@@ -91,15 +91,15 @@ graph TD
 
 ### 5. Smart Collapsing & Deterministic F5 Reset
 - **Header-Only Minimize Mode:**
-  - Collapses the card to an ultra-clean 56px header pill containing strictly the title and window controls (`□` expand and `✕` close), matching authentic Club Penguin windowing.
+  - Collapses the card to an ultra-clean 56px header pill containing strictly the title and window controls (`[_]` expand and `[X]` close), matching authentic Club Penguin windowing.
 - **Deterministic F5 Reset:**
   - Modal dimensions and position are kept strictly ephemeral in memory; refreshing the page (<kbd>F5</kbd>) immediately restores the canonical delimiter size (**370px × 500px**) and position (**top: 25px, right: 25px**).
 - **Background Keepalive on Close:**
-  - The `✕` button hides the modal overlay (`cpj-closed`) while preserving all running intervals and background bot automation.
+  - The `[X]` button hides the modal overlay (`cpj-closed`) while preserving all running intervals and background bot automation.
 
 ---
 
-## 🔬 Modular Architecture & Quality Metrics
+## Modular Architecture & Quality Metrics
 
 All modular source files strictly adhere to the opsx-build standard (**< 250 lines per file**):
 

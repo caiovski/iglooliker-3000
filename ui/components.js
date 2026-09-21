@@ -208,7 +208,7 @@ class BoosterUI {
         const list = this.modalEl.querySelector('#cpj-list-phrases'), phrases = this.state.get('phrases') || [], ic = window.CP_ICONS || {};
         list.innerHTML = phrases.map((p, i) => {
             const pObj = (typeof p === 'string') ? { text: p, enabled: true } : p, act = pObj.enabled !== false;
-            return `<div class="cpj-phrase-item ${act ? '' : 'inactive'}"><span class="cpj-phrase-item-text"><b>${i + 1}.</b> "${pObj.text}"</span><div style="display:flex;gap:4px;align-items:center;"><button class="cpj-btn-mini eye ${act ? '' : 'inactive'}" data-idx="${i}" title="${act ? 'Active' : 'Inactive'}">${act ? (ic.eyeClosed || '') : (ic.eyeOpen || '')}</button><button class="cpj-btn-mini edit" data-idx="${i}">✎</button><button class="cpj-btn-mini del" data-idx="${i}">✕</button></div></div>`;
+            return `<div class="cpj-phrase-item ${act ? '' : 'inactive'}"><span class="cpj-phrase-item-text"><b>${i + 1}.</b> "${pObj.text}"</span><div style="display:flex;gap:4px;align-items:center;"><button class="cpj-btn-mini eye ${act ? '' : 'inactive'}" data-idx="${i}" title="${act ? 'Active' : 'Inactive'}">${act ? (ic.eyeClosed || '') : (ic.eyeOpen || '')}</button><button class="cpj-btn-mini edit" data-idx="${i}" title="Edit">${ic.edit || ''}</button><button class="cpj-btn-mini del" data-idx="${i}" title="Delete">${ic.trash || ''}</button></div></div>`;
         }).join('');
         this.modalEl.querySelector('#cpj-cap-studio').textContent = `Slots: ${phrases.length}/6`;
         this.modalEl.querySelector('#cpj-btn-add').disabled = phrases.length >= 6;
