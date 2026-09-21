@@ -13,10 +13,16 @@
       <stop offset="100%" stop-color="#003666" />
     </linearGradient>
 
-    <!-- Header & Button -->
+    <!-- Header & Button Start (Blue) -->
     <linearGradient id="btnBlue" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#00b4ff" />
       <stop offset="100%" stop-color="#0077c4" />
+    </linearGradient>
+
+    <!-- Button Stop (Red) -->
+    <linearGradient id="btnRed" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff4757" />
+      <stop offset="100%" stop-color="#c0392b" />
     </linearGradient>
 
     <!-- Progress Bar Gradient -->
@@ -50,12 +56,47 @@
       0%, 100% { stroke-opacity: 0.85; stroke-width: 3.5px; }
       50% { stroke-opacity: 1; stroke-width: 5px; }
     }
-    @keyframes pulseLiveDot {
-      0%, 100% { opacity: 0.7; r: 5; }
-      50% { opacity: 1; r: 6.5; }
+    @keyframes cursorMovement {
+      0% { transform: translate(370px, 545px); opacity: 0; }
+      4% { opacity: 1; }
+      10% { transform: translate(210px, 495px); }
+      11% { transform: translate(210px, 495px) scale(0.88); }
+      12% { transform: translate(210px, 495px) scale(1); }
+      18% { transform: translate(310px, 535px); opacity: 0.85; }
+      60% { transform: translate(310px, 535px); opacity: 0.85; }
+      68% { transform: translate(210px, 495px); opacity: 1; }
+      71% { transform: translate(210px, 495px); }
+      72% { transform: translate(210px, 495px) scale(0.88); }
+      73% { transform: translate(210px, 495px) scale(1); }
+      82% { transform: translate(380px, 555px); opacity: 1; }
+      87%, 100% { transform: translate(380px, 555px); opacity: 0; }
+    }
+    @keyframes startBtnVisibility {
+      0%, 11.9% { opacity: 1; }
+      12%, 72.9% { opacity: 0; }
+      73%, 100% { opacity: 1; }
+    }
+    @keyframes stopBtnVisibility {
+      0%, 11.9% { opacity: 0; }
+      12%, 72.9% { opacity: 1; }
+      73%, 100% { opacity: 0; }
+    }
+    @keyframes statusActiveVisibility {
+      0%, 11.9% { opacity: 0; }
+      12%, 72.9% { opacity: 1; }
+      73%, 100% { opacity: 0; }
+    }
+    @keyframes statusPausedVisibility {
+      0%, 11.9% { opacity: 1; }
+      12%, 72.9% { opacity: 0; }
+      73%, 100% { opacity: 1; }
     }
     .hud-frame-glow { animation: pulseHudBorder 3s ease-in-out infinite; }
-    .live-dot-anim { animation: pulseLiveDot 1.5s ease-in-out infinite; }
+    .mouse-cursor { animation: cursorMovement 10s ease-in-out infinite; pointer-events: none; }
+    .btn-start-state { animation: startBtnVisibility 10s step-end infinite; }
+    .btn-stop-state { animation: stopBtnVisibility 10s step-end infinite; }
+    .status-active-state { animation: statusActiveVisibility 10s step-end infinite; }
+    .status-paused-state { animation: statusPausedVisibility 10s step-end infinite; }
   </style>
 
   <!-- Outer Modal Container with CP Blue Frame and Animated Cyan Borders -->
@@ -85,13 +126,26 @@
     <line x1="0" y1="42" x2="360" y2="42" stroke="#00e5ff" stroke-width="2" opacity="0.35" />
   </g>
 
-  <!-- Status Bar Pill -->
+  <!-- Status Bar Pill (Animated between Paused and Active) -->
   <g transform="translate(35, 92)">
     <rect x="0" y="0" width="350" height="34" rx="17" ry="17" fill="#003b70" stroke="#00e5ff" stroke-width="2" />
-    <circle class="live-dot-anim" cx="20" cy="17" r="5" fill="#2ed573" stroke="#ffffff" stroke-width="1.5" />
-    <text x="35" y="22" font-family="'Segoe UI', Arial, sans-serif" font-weight="700" font-size="12" fill="#ffffff">
-      Status: Active &amp; Dancing
-    </text>
+
+    <!-- Paused State -->
+    <g class="status-paused-state">
+      <circle cx="20" cy="17" r="5" fill="#ffcc00" stroke="#ffffff" stroke-width="1.5" />
+      <text x="35" y="22" font-family="'Segoe UI', Arial, sans-serif" font-weight="700" font-size="12" fill="#ffffff">
+        Status: Ready (Paused)
+      </text>
+    </g>
+
+    <!-- Active State -->
+    <g class="status-active-state">
+      <circle cx="20" cy="17" r="5" fill="#2ed573" stroke="#ffffff" stroke-width="1.5" />
+      <text x="35" y="22" font-family="'Segoe UI', Arial, sans-serif" font-weight="700" font-size="12" fill="#ffffff">
+        Status: Active &amp; Dancing
+      </text>
+    </g>
+
     <text x="330" y="22" text-anchor="end" font-family="'Segoe UI', Arial, sans-serif" font-weight="700" font-size="12" fill="#8edeff">
       All Rooms
     </text>
@@ -181,12 +235,29 @@
     </text>
   </g>
 
-  <!-- Big Start Button (Positioned Directly Below Current Rotating Message) -->
+  <!-- ==================== ANIMATED BUTTON (START / STOP) ==================== -->
   <g transform="translate(35, 474)">
-    <rect x="0" y="0" width="350" height="52" rx="26" ry="26" fill="url(#btnBlue)" stroke="#00e5ff" stroke-width="3" />
-    <rect x="4" y="4" width="342" height="20" rx="10" ry="10" fill="#ffffff" opacity="0.15" />
-    <text x="175" y="33" text-anchor="middle" font-family="'Fredoka', 'Segoe UI', Arial, sans-serif" font-weight="900" font-size="18" fill="#ffffff" stroke="#00284d" stroke-width="2" paint-order="stroke fill" letter-spacing="2">
-      START BOT
-    </text>
+    <!-- START BOT State (Blue) -->
+    <g class="btn-start-state">
+      <rect x="0" y="0" width="350" height="52" rx="26" ry="26" fill="url(#btnBlue)" stroke="#00e5ff" stroke-width="3" />
+      <rect x="4" y="4" width="342" height="20" rx="10" ry="10" fill="#ffffff" opacity="0.15" />
+      <text x="175" y="33" text-anchor="middle" font-family="'Fredoka', 'Segoe UI', Arial, sans-serif" font-weight="900" font-size="18" fill="#ffffff" stroke="#00284d" stroke-width="2" paint-order="stroke fill" letter-spacing="2">
+        START BOT
+      </text>
+    </g>
+
+    <!-- STOP BOT State (Red) - Visible for 6 Seconds -->
+    <g class="btn-stop-state">
+      <rect x="0" y="0" width="350" height="52" rx="26" ry="26" fill="url(#btnRed)" stroke="#ff6b81" stroke-width="3" />
+      <rect x="4" y="4" width="342" height="20" rx="10" ry="10" fill="#ffffff" opacity="0.15" />
+      <text x="175" y="33" text-anchor="middle" font-family="'Fredoka', 'Segoe UI', Arial, sans-serif" font-weight="900" font-size="18" fill="#ffffff" stroke="#5c0000" stroke-width="2" paint-order="stroke fill" letter-spacing="2">
+        STOP BOT
+      </text>
+    </g>
+  </g>
+
+  <!-- ==================== ANIMATED MOUSE CURSOR ==================== -->
+  <g class="mouse-cursor">
+    <path d="M 0 0 L 0 20 L 4.8 15.5 L 9 24 L 12.5 22.5 L 8.3 14.5 L 14.5 14.5 Z" fill="#ffffff" stroke="#001830" stroke-width="2" stroke-linejoin="round" />
   </g>
 </svg>

@@ -1,13 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 24" width="100%" height="24">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 40" width="100%" height="40">
   <defs>
-    <linearGradient id="divGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0" />
-      <stop offset="25%" stop-color="#00e5ff" stop-opacity="0.8" />
-      <stop offset="50%" stop-color="#66f3ff" stop-opacity="1" />
-      <stop offset="75%" stop-color="#00e5ff" stop-opacity="0.8" />
-      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0" />
+    <linearGradient id="dividerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#002d55" stop-opacity="0" />
+      <stop offset="25%" stop-color="#0077c4" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#00e5ff">
+        <animate attributeName="stop-color" values="#00e5ff;#7fe3ff;#0099ff;#00e5ff" dur="3s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="75%" stop-color="#0077c4" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#002d55" stop-opacity="0" />
     </linearGradient>
+
+    <filter id="divGlow">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
   </defs>
-  <rect x="50" y="10" width="700" height="3" rx="1.5" fill="url(#divGrad)" />
-  <circle cx="400" cy="11.5" r="4" fill="#00e5ff" stroke="#003b70" stroke-width="2" />
+
+  <style>
+    @keyframes pulseDiamond {
+      0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 2px #00e5ff); }
+      50% { opacity: 1; filter: drop-shadow(0 0 8px #66f3ff); }
+    }
+    .center-diamond { animation: pulseDiamond 2.5s ease-in-out infinite; }
+  </style>
+
+  <!-- Glowing Center Bar -->
+  <line x1="80" y1="20" x2="770" y2="20" stroke="url(#dividerGrad)" stroke-width="3" stroke-linecap="round" filter="url(#divGlow)" />
+  <line x1="160" y1="20" x2="690" y2="20" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.6" />
+
+  <!-- Center Diamond Crystal with Frost Blue Shimmer -->
+  <g class="center-diamond">
+    <polygon points="425,6 439,20 425,34 411,20" fill="#00e5ff" stroke="#ffffff" stroke-width="2.5" />
+    <polygon points="425,11 433,20 425,29 417,20" fill="#66f3ff" />
+    <circle cx="425" cy="20" r="3" fill="#ffffff" />
+  </g>
+
+  <!-- Side Crystal Accents -->
+  <polygon points="260,13 267,20 260,27 253,20" fill="#00e5ff" stroke="#ffffff" stroke-width="1" opacity="0.9" />
+  <polygon points="590,13 597,20 590,27 583,20" fill="#00e5ff" stroke="#ffffff" stroke-width="1" opacity="0.9" />
 </svg>

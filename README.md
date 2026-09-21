@@ -167,9 +167,10 @@ iglooliker-3000/
 |-- README.md                   # Project documentation
 |-- LICENSE                     # MIT License file
 |-- assets/                     # Design mockups, UI reference sprites, banners, and SVGs
-|   |-- club-penguin-banner.svg # Vector banner with blue frame and badges
-|   |-- modal-hud-preview.svg   # Vector graphic of the authentic robot interface
-|   |-- divider.svg             # Club Penguin styled cyan divider
+|   |-- header-banner.svg       # Animated header banner with blue frame and badges
+|   |-- modal-hud-preview.svg   # Vector graphic with clicking mouse animation (Start -> Stop -> Start)
+|   |-- divider.svg             # Animated frost blue diamond crystal divider
+|   |-- footer-banner.svg       # Animated footer watermark with CAIOVSKI branding
 |   |-- design/                 # Reference screenshots and UI layouts
 |   `-- welcome room/           # Background assets
 |-- core/                       # Modular business logic (< 250 lines)
