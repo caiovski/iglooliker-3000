@@ -1,7 +1,8 @@
 <div align="center">
 
-# IGLOOLIKER 3000
-### Universal AFK Igloo Likes Booster for Club Penguin Journey
+<img src="assets/club-penguin-banner.svg" alt="IglooLiker 3000 Banner" width="100%" />
+
+<br />
 
 [![Version](https://img.shields.io/badge/Version-3.0.0-00e5ff?style=for-the-badge&logoColor=white)](https://play.cpjourney.net)
 [![Platform](https://img.shields.io/badge/Platform-CPJ%20(Yukon%20HTML5)-0072ff?style=for-the-badge&logoColor=white)](https://play.cpjourney.net)
@@ -17,30 +18,34 @@
   Boost your igloo likes safely in background tabs while freely using your computer for study, gaming, or work.
 </p>
 
-</div>
+<img src="assets/divider.svg" alt="Divider" width="100%" />
 
----
+</div>
 
 ## Overview
 
-**IglooLiker 3000** is an automated assistant designed to help players reach their igloo like targets without risking server disconnection or locking the operating system's mouse and keyboard. Built with a pixel-perfect Club Penguin user interface, it combines native Yukon client simulation, intelligent clipboard pasting, and randomized anti-spam intervals.
+**IglooLiker 3000** is an automated assistant designed to help players reach their igloo like targets without risking server disconnection or locking the operating system's mouse and keyboard. Built with an authentic Club Penguin HUD interface (blue frame, cyan bevels, gold accents, and zero emojis), it combines native Yukon client simulation, intelligent clipboard pasting, and randomized anti-spam intervals.
 
----
+<div align="center">
+  <img src="assets/modal-hud-preview.svg" alt="IglooLiker 3000 Interface Preview" width="420" />
+</div>
+
+<img src="assets/divider.svg" alt="Divider" width="100%" />
 
 ## Core Capabilities
 
 <table>
   <tr>
-    <td width="50%">
-      <h4>Safe Chat Automation</h4>
+    <td width="50%" valign="top">
+      <h3>Safe Chat Automation</h3>
       <ul>
         <li><b>Zero Network Injection:</b> Avoids raw WebSocket packet tampering (<code>net.send</code>) to eliminate kick/disconnect risks.</li>
         <li><b>Native Input Simulation:</b> Focuses the game chat input, clears previous values, and pastes text via <code>document.execCommand('insertText')</code>.</li>
         <li><b>Dual Send Trigger:</b> Dispatches native Enter events (<code>keyCode 13</code>) alongside canvas pointer clicks on the HUD send button (<code>x=1026, y=923</code>).</li>
       </ul>
     </td>
-    <td width="50%">
-      <h4>Dynamic Goal & Likes Tracking</h4>
+    <td width="50%" valign="top">
+      <h3>Dynamic Goal &amp; Likes Tracking</h3>
       <ul>
         <li><b>Automatic Likes Detection:</b> Automatically tracks penguin igloo likes directly from the client world state.</li>
         <li><b>Custom Target Goal:</b> Editable goal field with real-time reactive progress updates.</li>
@@ -49,26 +54,26 @@
     </td>
   </tr>
   <tr>
-    <td width="50%">
-      <h4>Universal & Background Operation</h4>
+    <td width="50%" valign="top">
+      <h3>Universal &amp; Background Operation</h3>
       <ul>
         <li><b>All Rooms Supported:</b> Universal operation across any room in Club Penguin Journey without room restrictions.</li>
         <li><b>Background Keepalive:</b> Employs Web Worker timers and synthetic event loops to continue execution in minimized or background tabs.</li>
         <li><b>Auto-Dance (D):</b> Automatically triggers the dance command once upon activation.</li>
       </ul>
     </td>
-    <td width="50%">
-      <h4>Club Penguin Authentic UI</h4>
+    <td width="50%" valign="top">
+      <h3>Club Penguin Authentic UI</h3>
       <ul>
         <li><b>Zero Emojis:</b> Pure SVG vector iconography matching authentic Club Penguin sprites and assets.</li>
         <li><b>Free 2D Dragging:</b> Drag the modal anywhere across the viewport via mouse drag.</li>
-        <li><b>Floating Launcher & Shortcut:</b> Floating snow-white igloo button with <code>F9</code> hotkey toggle.</li>
+        <li><b>Floating Launcher &amp; Shortcut:</b> Floating snow-white igloo button with <kbd>F9</kbd> hotkey toggle.</li>
       </ul>
     </td>
   </tr>
 </table>
 
----
+<img src="assets/divider.svg" alt="Divider" width="100%" />
 
 ## Rotating Anti-Spam Phrases
 
@@ -79,9 +84,9 @@ To comply with the Club Penguin Journey chat filter and prevent automatic muting
 3. `"Working on my one k igloo likes goal! Any like helps a lot!"`
 4. `"Please visit my igloo and leave a like for one k! Thank you so much!"`
 
-> **Note on Anti-Spam Timing:** The delay between messages dynamically jitters between **9 and 11 seconds** (`9000ms - 11000ms`), providing optimal safety against flood filters.
+> **Anti-Spam Delay Window:** The delay between messages dynamically jitters between **9 and 11 seconds** (`9000ms - 11000ms`), providing optimal safety against flood filters.
 
----
+<img src="assets/divider.svg" alt="Divider" width="100%" />
 
 ## Installation Guide
 
@@ -90,17 +95,17 @@ To comply with the Club Penguin Journey chat filter and prevent automatic muting
 1. Install the [Tampermonkey Extension](https://www.tampermonkey.net/) in your web browser (Firefox, Chrome, Brave, or Edge).
 2. Open the Tampermonkey Dashboard and click **Create a new script** (`+`).
 3. Copy the entire contents of [`cpj_igloo_booster.user.js`](./cpj_igloo_booster.user.js).
-4. Paste into the Tampermonkey script editor and save (`Ctrl + S`).
+4. Paste into the Tampermonkey script editor and save (<kbd>Ctrl</kbd> + <kbd>S</kbd>).
 5. Navigate to [play.cpjourney.net](https://play.cpjourney.net) and log into your penguin.
-6. The circular igloo launcher icon will appear in the top-right corner of the screen. Click it or press **`F9`** to open the control panel.
+6. The circular igloo launcher icon will appear in the top-right corner of the screen. Click it or press <kbd>F9</kbd> to open the control panel.
 
 ### Option 2: Browser Developer Console (Quick Test)
 
 1. Open [play.cpjourney.net](https://play.cpjourney.net) in your browser and log in.
-2. Press `F12` (or `Ctrl + Shift + I`) to open Developer Tools and navigate to the **Console** tab.
-3. Paste the contents of [`cpj_igloo_booster.user.js`](./cpj_igloo_booster.user.js) into the console and press `Enter`.
+2. Press <kbd>F12</kbd> (or <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>I</kbd>) to open Developer Tools and navigate to the **Console** tab.
+3. Paste the contents of [`cpj_igloo_booster.user.js`](./cpj_igloo_booster.user.js) into the console and press <kbd>Enter</kbd>.
 
----
+<img src="assets/divider.svg" alt="Divider" width="100%" />
 
 ## User Guide
 
@@ -140,7 +145,7 @@ To comply with the Club Penguin Journey chat filter and prevent automatic muting
 4. **Moving the Interface:**
    - Click and drag the header bar to reposition the panel anywhere on your screen.
 
----
+<img src="assets/divider.svg" alt="Divider" width="100%" />
 
 ## Interactive Local Preview
 
@@ -151,7 +156,7 @@ You can test the entire user interface and logic locally without opening the gam
 3. Click **START BOT** to inspect the simulated dance action and chat log output in real time.
 4. Adjust goal values to verify progress bar transitions and percentage formatting.
 
----
+<img src="assets/divider.svg" alt="Divider" width="100%" />
 
 ## Repository Structure
 
@@ -160,7 +165,13 @@ iglooliker-3000/
 |-- cpj_igloo_booster.user.js   # Complete standalone userscript
 |-- preview.html                # Interactive local simulation preview
 |-- README.md                   # Project documentation
-|-- assets/                     # Design mockups, UI reference sprites, and backgrounds
+|-- LICENSE                     # MIT License file
+|-- assets/                     # Design mockups, UI reference sprites, banners, and SVGs
+|   |-- club-penguin-banner.svg # Vector banner with blue frame and badges
+|   |-- modal-hud-preview.svg   # Vector graphic of the authentic robot interface
+|   |-- divider.svg             # Club Penguin styled cyan divider
+|   |-- design/                 # Reference screenshots and UI layouts
+|   `-- welcome room/           # Background assets
 |-- core/                       # Modular business logic (< 250 lines)
 |   |-- engine.js               # Background timer, chat dispatch, and dance engine
 |   `-- state.js                # Reactive state container, validation, and storage
@@ -176,7 +187,7 @@ iglooliker-3000/
             `-- tasks.md        # Comprehensive task breakdown
 ```
 
----
+<img src="assets/divider.svg" alt="Divider" width="100%" />
 
 ## Update History (Sprint Log)
 
@@ -196,7 +207,7 @@ iglooliker-3000/
 - **Free 2D Viewport Dragging:** Added unconstrained drag-and-drop movement across both X and Y axes.
 - **Opsx-Build Modular Refactoring:** Split codebase into modular files (`core/engine.js`, `core/state.js`, `ui/components.js`, `ui/icons.js`, `ui/styles.css`), each strictly under 250 lines.
 
----
+<img src="assets/divider.svg" alt="Divider" width="100%" />
 
 ## License & Copyright
 
@@ -216,4 +227,3 @@ Developed for educational and personal automation purposes. Club Penguin Journey
   <br />
   <sub><b>IGLOOLIKER 3000</b> &bull; Built with precision by <b>CAIOVSKI</b></sub>
 </div>
-
