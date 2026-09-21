@@ -5,6 +5,8 @@
 
 [![Version](https://img.shields.io/badge/Version-3.0.0-00e5ff?style=for-the-badge&logoColor=white)](https://play.cpjourney.net)
 [![Platform](https://img.shields.io/badge/Platform-CPJ%20(Yukon%20HTML5)-0072ff?style=for-the-badge&logoColor=white)](https://play.cpjourney.net)
+[![Author](https://img.shields.io/badge/Author-CAIOVSKI-00e5ff?style=for-the-badge&logo=github&logoColor=white)](https://github.com/caiovski)
+[![License: MIT](https://img.shields.io/badge/License-MIT-0072ff?style=for-the-badge&logoColor=white)](./LICENSE)
 [![Compatibility](https://img.shields.io/badge/Browser-Firefox%20%7C%20Chrome%20%7C%20Edge-00284d?style=for-the-badge&logoColor=white)](https://www.tampermonkey.net/)
 [![Safety](https://img.shields.io/badge/Risk-Zero%20Disconnect-00a86b?style=for-the-badge&logoColor=white)](https://play.cpjourney.net)
 
@@ -196,6 +198,22 @@ iglooliker-3000/
 
 ---
 
-## License
+## License & Copyright
 
-Developed for educational and personal automation purposes. Club Penguin Journey is a community recreation project; this tool is unaffiliated with Disney or CPJ staff.
+Copyright (c) 2026 **CAIOVSKI**. All rights reserved.
+
+This project is licensed under the **MIT License**. See the [`LICENSE`](./LICENSE) file for the full license terms and conditions.
+
+### Disclaimer
+Developed for educational and personal automation purposes. Club Penguin Journey is a community recreation project; this tool is unaffiliated with Disney, Disney Interactive, or CPJ staff.
+
+<br />
+
+<div align="center">
+  <a href="https://github.com/caiovski">
+    <img src="https://img.shields.io/badge/CAIOVSKI-GitHub%20Profile-00284d?style=for-the-badge&logo=github&logoColor=00e5ff" alt="CAIOVSKI GitHub" />
+  </a>
+  <br />
+  <sub><b>IGLOOLIKER 3000</b> &bull; Built with precision by <b>CAIOVSKI</b></sub>
+</div>
+
