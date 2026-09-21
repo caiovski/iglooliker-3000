@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=00e5ff&height=220&section=header&text=IglooLiker%203000%20-%20Sprint%20Report&fontSize=42&fontColor=001f3f&fontAlignY=38&desc=Release%203.1.0%20%E2%80%94%20Multi-Penguin%20Actions%20%26%20Phrase%20Studio%20Suite&descFontSize=18&descAlignY=58&descColor=003b70" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=00e5ff&height=220&section=header&text=IglooLiker%203000%20-%20Sprint%20Report&fontSize=42&fontColor=001f3f&fontAlignY=38&desc=Release%203.1.0%20-%20Multi-Penguin%20Actions%20and%20Phrases%20Studio%20Suite&descFontSize=18&descAlignY=58&descColor=003b70" width="100%" />
 
 <br />
 
