@@ -1,6 +1,6 @@
 /**
  * CPJ Igloo Likes AFK Booster - Core Engine (IglooLiker 3000)
- * Regra opsx-build: < 250 linhas, universal em todas as salas, chat nativo Yukon.
+ * Regra opsx-build: < 250 linhas, ações alternadas (Dança/Wave), timer de repetição e chat seguro.
  */
 
 class BoosterEngine {
@@ -8,6 +8,8 @@ class BoosterEngine {
         this.state = state;
         this.worker = null;
         this.timerId = null;
+        this.actionTimer = null;
+        this.actionCycleIndex = 0;
         this.initWorker();
         this.startLikesPolling();
     }
@@ -31,7 +33,6 @@ class BoosterEngine {
                 if (e.data === 'tick') this.handleTick();
             };
         } catch (err) {
-            console.warn('[CPJ Booster] Worker bloqueado por CSP. Usando timer padrão.');
             this.worker = null;
         }
     }
@@ -48,15 +49,15 @@ class BoosterEngine {
                 const net = g.network || g.scene?.getScene?.('Main')?.network;
                 if (net && !net.__cpj_hooked) {
                     net.__cpj_hooked = true;
-                    const origOnMessage = net.onMessage;
-                    if (typeof origOnMessage === 'function') {
-                        net.onMessage = (message) => {
+                    const orig = net.onMessage;
+                    if (typeof orig === 'function') {
+                        net.onMessage = (msg) => {
                             try {
-                                const args = message?.args || message;
-                                const likes = args?.likes ?? args?.iglooLikes ?? args?.igloo?.likes;
-                                if (typeof likes === 'number' && likes >= 0) this.state.updateLikes(likes);
+                                const args = msg?.args || msg;
+                                const l = args?.likes ?? args?.iglooLikes ?? args?.igloo?.likes;
+                                if (typeof l === 'number' && l >= 0) this.state.updateLikes(l);
                             } catch (e) {}
-                            return origOnMessage.call(net, message);
+                            return orig.call(net, msg);
                         };
                     }
                 }
@@ -65,18 +66,14 @@ class BoosterEngine {
     }
 
     detectPenguinLikes() {
-        this.hookNetworkMessages();
         try {
             const games = [window.game, window.yukon?.game, ...(window.Phaser?.GAMES ? Object.values(window.Phaser.GAMES) : [])].filter(Boolean);
             for (const g of games) {
                 for (const sc of (g.scene?.scenes || [])) {
-                    const client = sc.world?.client || sc.client || window.air?.world?.client;
+                    const client = sc.world?.client || sc.client;
                     if (client?.penguin) {
-                        const likes = client.penguin.iglooLikes ?? client.penguin.likes ?? client.penguin.igloo?.likes ?? client.iglooLikes;
-                        if (typeof likes === 'number' && likes !== this.state.get('currentLikes')) {
-                            this.state.updateLikes(likes);
-                            return;
-                        }
+                        const l = client.penguin.iglooLikes ?? client.penguin.likes ?? client.penguin.igloo?.likes ?? client.iglooLikes;
+                        if (typeof l === 'number') this.state.updateLikes(l);
                     }
                 }
             }
@@ -84,75 +81,100 @@ class BoosterEngine {
     }
 
     start() {
-        if (this.state.get('isRunning')) return;
         this.state.set('isRunning', true);
         this.state.set('hasDanced', false);
-        this.checkRoomAndPerform();
-        this.scheduleNext();
+        this.startActionLoop();
+        this.handleTick();
     }
 
     stop() {
         this.state.set('isRunning', false);
+        this.stopActionLoop();
         if (this.worker) this.worker.postMessage({ action: 'stop' });
         if (this.timerId) { clearTimeout(this.timerId); this.timerId = null; }
     }
 
-    scheduleNext() {
+    handleTick() {
         if (!this.state.get('isRunning')) return;
-        const delay = this.state.get('randomInterval') 
-            ? Math.floor(Math.random() * (11000 - 9000 + 1)) + 9000 
+
+        if (!this.state.get('repeatAction') && !this.state.get('hasDanced')) {
+            this.executeActiveAction();
+            this.state.set('hasDanced', true);
+        }
+
+        if (!this.state.get('deactivatePhrases')) {
+            const msg = this.state.getNextPhrase();
+            if (msg) {
+                this.sendChatMessage(msg);
+                this.state.set('lastSentMessage', msg);
+            }
+        }
+
+        const delay = this.state.get('randomDelay')
+            ? Math.floor(Math.random() * 2000) + 9000
             : 10000;
+
         if (this.worker) {
             this.worker.postMessage({ action: 'start', delay });
         } else {
-            if (this.timerId) clearTimeout(this.timerId);
             this.timerId = setTimeout(() => this.handleTick(), delay);
         }
     }
 
-    handleTick() {
-        if (!this.state.get('isRunning')) return;
-        this.checkRoomAndPerform();
-        this.scheduleNext();
-    }
-
-    // Universal: detecta a sala mas NÃO bloqueia a execução em nenhuma sala
-    checkRoomAndPerform() {
-        if (this.state.get('autoDance') && !this.state.get('hasDanced')) {
-            this.performDance();
-            this.state.set('hasDanced', true);
+    executeActiveAction() {
+        const dance = this.state.get('autoDance');
+        const wave = this.state.get('autoWave');
+        if (dance && wave) {
+            if (this.actionCycleIndex % 2 === 0) this.dispatchKey('d', 'KeyD', 68);
+            else this.dispatchKey('w', 'KeyW', 87);
+            this.actionCycleIndex++;
+        } else if (dance) {
+            this.dispatchKey('d', 'KeyD', 68);
+        } else if (wave) {
+            this.dispatchKey('w', 'KeyW', 87);
         }
-        this.sendChatLikeMessage();
     }
 
-    performDance() {
+    startActionLoop() {
+        this.stopActionLoop();
+        this.executeActiveAction();
+        if (this.state.get('repeatAction') && this.state.get('isRunning')) {
+            const ms = Math.max(5, Math.min(10, this.state.get('actionInterval'))) * 1000;
+            this.actionTimer = setInterval(() => {
+                if (this.state.get('isRunning')) this.executeActiveAction();
+            }, ms);
+        }
+    }
+
+    stopActionLoop() {
+        if (this.actionTimer) {
+            clearInterval(this.actionTimer);
+            this.actionTimer = null;
+        }
+    }
+
+    dispatchKey(key, code, keyCode) {
         try {
-            const world = window.world || window.air?.world;
-            if (world?.client?.sendDance) {
-                world.client.sendDance();
-                return;
-            }
             const target = document.querySelector('canvas') || document.body;
-            target.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', code: 'KeyD', keyCode: 68, which: 68, bubbles: true }));
-            setTimeout(() => target.dispatchEvent(new KeyboardEvent('keyup', { key: 'd', code: 'KeyD', keyCode: 68, which: 68, bubbles: true })), 80);
-        } catch (err) {}
+            const PKE = window.KeyboardEvent;
+            ['keydown', 'keyup'].forEach(type => {
+                const ev = new PKE(type, { key, code, keyCode, which: keyCode, bubbles: true });
+                target.dispatchEvent(ev);
+                window.dispatchEvent(ev);
+            });
+        } catch (e) {}
     }
 
-    sendChatLikeMessage() {
-        const msg = this.state.getNextPhrase();
+    sendChatMessage(msg) {
         if (!msg) return;
-
-        this.state.set('lastSentMessage', msg);
-        this.state.set('lastSentTimestamp', Date.now());
-
         try {
             if (navigator.clipboard?.writeText) navigator.clipboard.writeText(msg).catch(() => {});
         } catch (e) {}
 
-        let chatInps = Array.from(document.querySelectorAll('input[autocomplete="new-password"], input[type="text"], input:not([type]), textarea'))
+        let inps = Array.from(document.querySelectorAll('input[autocomplete="new-password"], input[type="text"], input:not([type]), textarea'))
             .filter(el => !el.closest('#cpj-modal') && !el.closest('#cpj-igloo-booster-modal') && el.type !== 'hidden' && el.type !== 'checkbox' && el.type !== 'button' && el.type !== 'submit');
 
-        if (chatInps.length === 0) {
+        if (inps.length === 0) {
             const canvas = document.querySelector('canvas') || document.body;
             canvas.focus?.();
             const PKE = window.KeyboardEvent;
@@ -161,16 +183,14 @@ class BoosterEngine {
                 canvas.dispatchEvent(ev);
                 window.dispatchEvent(ev);
             });
-            chatInps = Array.from(document.querySelectorAll('input[autocomplete="new-password"], input[type="text"], input:not([type]), textarea'))
+            inps = Array.from(document.querySelectorAll('input[autocomplete="new-password"], input[type="text"], input:not([type]), textarea'))
                 .filter(el => !el.closest('#cpj-modal') && !el.closest('#cpj-igloo-booster-modal') && el.type !== 'hidden' && el.type !== 'checkbox' && el.type !== 'button' && el.type !== 'submit');
         }
 
-        const inp = chatInps.find(el => el.offsetParent !== null) || chatInps[0];
+        const inp = inps.find(el => el.offsetParent !== null) || inps[0];
         if (!inp) return;
 
-        inp.focus();
-        inp.click();
-        inp.value = '';
+        inp.focus(); inp.click(); inp.value = '';
         if (typeof inp.select === 'function') inp.select();
 
         let pasted = false;
@@ -220,8 +240,5 @@ class BoosterEngine {
     }
 }
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { BoosterEngine };
-} else {
-    window.CPJBoosterEngine = BoosterEngine;
-}
+if (typeof module !== 'undefined' && module.exports) module.exports = { BoosterEngine };
+else window.BoosterEngine = BoosterEngine;

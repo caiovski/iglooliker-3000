@@ -170,9 +170,9 @@
             </div>
         </div>
 
-        <!-- Indicador de Dança -->
-        <div class="dance-indicator" id="dance-indicator">
-            Pinguim Dançando (Comando 'D' Ativado)
+        <!-- Indicadores de Ação (Dança / Wave) -->
+        <div class="dance-indicator" id="action-indicator" style="display:none;position:absolute;top:70px;left:25px;background:#003b70;border:2px solid #00e5ff;color:#ffffff;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,0.5);">
+            Ação: <span id="action-txt" style="color:#ffe853;">Dança ('D')</span>
         </div>
 
         <!-- Log de Chat Simulado -->
@@ -207,11 +207,25 @@
             ui.render();
 
             const chatList = document.getElementById('chat-list');
-            const danceIndicator = document.getElementById('dance-indicator');
+            const actionIndicator = document.getElementById('action-indicator');
+            const actionTxt = document.getElementById('action-txt');
+
+            // Escuta eventos de teclado (Dança 'D' e Wave 'W') para exibir no preview
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'd' || e.key === 'D') {
+                    actionTxt.textContent = "Dança ('D')";
+                    actionIndicator.style.display = 'block';
+                    setTimeout(() => { if (!state.get('isRunning') || !state.get('autoDance')) actionIndicator.style.display = 'none'; }, 2000);
+                } else if (e.key === 'w' || e.key === 'W') {
+                    actionTxt.textContent = "Aceno ('W' - Anti-AFK)";
+                    actionIndicator.style.display = 'block';
+                    setTimeout(() => { if (!state.get('isRunning') || !state.get('autoWave')) actionIndicator.style.display = 'none'; }, 2000);
+                }
+            });
 
             // Escuta mensagens enviadas para exibir no chat simulado
-            state.subscribe((key, val) => {
-                if (key === 'lastSentMessage' && val) {
+            state.subscribe('lastSentMessage', (val) => {
+                if (val && !state.get('deactivatePhrases')) {
                     const now = new Date();
                     const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
                     
@@ -220,14 +234,6 @@
                     item.innerHTML = `<span class="time">${timeStr}</span> <span class="author">Você:</span> ${val}`;
                     chatList.appendChild(item);
                     chatList.scrollTop = chatList.scrollHeight;
-                }
-
-                if (key === 'hasDanced') {
-                    danceIndicator.style.display = val ? 'block' : 'none';
-                }
-
-                if (key === 'isWelcomeRoom' && !val) {
-                    danceIndicator.style.display = 'none';
                 }
             });
 
