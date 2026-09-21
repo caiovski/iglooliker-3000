@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 130" width="100%" height="130">
+  <defs>
+    <linearGradient id="cpFootBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#002d55" />
+      <stop offset="60%" stop-color="#001d38" />
+      <stop offset="100%" stop-color="#001224" />
+    </linearGradient>
+
+    <linearGradient id="cpFootBorder" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00e5ff">
+        <animate attributeName="stop-color" values="#00e5ff;#0077c4;#66f3ff;#00e5ff" dur="4s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="100%" stop-color="#0077c4">
+        <animate attributeName="stop-color" values="#0077c4;#66f3ff;#00e5ff;#0077c4" dur="4s" repeatCount="indefinite" />
+      </stop>
+    </linearGradient>
+
+    <filter id="footShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#00143c" flood-opacity="0.75" />
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes starGlow {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+    .foot-star-1 { animation: starGlow 2.5s ease-in-out infinite; }
+    .foot-star-2 { animation: starGlow 2.8s ease-in-out infinite 1s; }
+    .font-foot {
+      font-family: 'Fredoka', 'Balsamiq Sans', 'Segoe UI', Arial, sans-serif;
+      font-weight: 700;
+    }
+  </style>
+
+  <!-- Outer Frame -->
+  <rect x="10" y="10" width="830" height="110" rx="20" fill="url(#cpFootBg)" stroke="url(#cpFootBorder)" stroke-width="3" filter="url(#footShadow)" />
+
+  <!-- Stars -->
+  <g class="foot-star-1" transform="translate(60, 60)">
+    <polygon points="0,-10 3,-3 10,0 3,3 0,10 -3,3 -10,0 -3,-3" fill="#00e5ff" />
+  </g>
+  <g class="foot-star-2" transform="translate(790, 60)">
+    <polygon points="0,-10 3,-3 10,0 3,3 0,10 -3,3 -10,0 -3,-3" fill="#00e5ff" />
+  </g>
+
+  <!-- Watermark Text -->
+  <text class="font-foot" x="425" y="44" text-anchor="middle" font-size="16" fill="#ffffff" letter-spacing="1px">
+    IGLOOLIKER 3000 &#8226; CRAFTED BY <tspan fill="#00e5ff">CAIOVSKI</tspan>
+  </text>
+
+  <!-- Subtitle -->
+  <text class="font-foot" x="425" y="68" text-anchor="middle" font-size="12" fill="#b3e5fc">
+    Copyright (c) 2026 CAIOVSKI &#8226; Licensed under the MIT License
+  </text>
+
+  <!-- Mini Badges Row -->
+  <g transform="translate(265, 84)">
+    <!-- GitHub Badge -->
+    <rect x="0" y="0" width="150" height="22" rx="11" fill="#003b70" stroke="#00e5ff" stroke-width="1.5" />
+    <path d="M 16 4 C 12.68 4 10 6.68 10 10 C 10 12.65 11.72 14.9 14.11 15.7 C 14.37 15.75 14.46 15.59 14.46 15.45 C 14.46 15.33 14.45 14.91 14.45 14.41 C 12.95 14.74 12.64 13.75 12.64 13.75 C 12.39 13.12 12.04 12.95 12.04 12.95 C 11.55 12.62 12.07 12.63 12.07 12.63 C 12.61 12.66 12.89 13.22 12.89 13.22 C 13.37 14.04 14.15 13.8 14.46 13.66 C 14.51 13.31 14.65 13.07 14.8 12.93 C 13.6 12.79 12.34 12.33 12.34 10.26 C 12.34 9.67 12.55 9.19 12.89 8.81 C 12.84 8.67 12.65 8.12 12.95 7.37 C 12.95 7.37 13.4 7.23 14.44 7.93 C 14.88 7.81 15.33 7.75 15.79 7.75 C 16.25 7.75 16.7 7.81 17.14 7.93 C 18.18 7.23 18.63 7.37 18.63 7.37 C 18.93 8.12 18.74 8.67 18.69 8.81 C 19.04 9.19 19.24 9.67 19.24 10.26 C 19.24 12.34 17.98 12.79 16.78 12.93 C 16.98 13.1 17.15 13.43 17.15 13.95 C 17.15 14.69 17.14 15.29 17.14 15.45 C 17.14 15.59 17.23 15.76 17.5 15.7 C 19.88 14.9 21.6 12.65 21.6 10 C 21.6 6.68 18.92 4 15.6 4 Z" fill="#00e5ff" transform="scale(0.8) translate(-1, 0)" />
+    <text class="font-foot" x="84" y="15" text-anchor="middle" font-size="10" fill="#ffffff">github.com/caiovski</text>
+
+    <!-- CPJ Community Badge -->
+    <rect x="170" y="0" width="150" height="22" rx="11" fill="#003b70" stroke="#0077c4" stroke-width="1.5" />
+    <text class="font-foot" x="245" y="15" text-anchor="middle" font-size="10" fill="#b3e5fc">Club Penguin Journey</text>
+  </g>
+</svg>

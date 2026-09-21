@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 280" width="100%" height="280">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="cpHeadBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00a8ff" />
+      <stop offset="45%" stop-color="#0084d6" />
+      <stop offset="85%" stop-color="#0066b3" />
+      <stop offset="100%" stop-color="#004a88" />
+    </linearGradient>
+
+    <!-- Glass Top Highlight -->
+    <linearGradient id="cpHeadGlass" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Animated Border Gradient -->
+    <linearGradient id="cpHeadBorder" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00e5ff">
+        <animate attributeName="stop-color" values="#00e5ff;#7fe3ff;#0099ff;#00e5ff" dur="4s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="50%" stop-color="#7fe3ff">
+        <animate attributeName="stop-color" values="#7fe3ff;#00e5ff;#7fe3ff;#0099ff" dur="4s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="100%" stop-color="#00a8ff">
+        <animate attributeName="stop-color" values="#00a8ff;#00e5ff;#7fe3ff;#00a8ff" dur="4s" repeatCount="indefinite" />
+      </stop>
+    </linearGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="cpHeadShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#00143c" flood-opacity="0.75" />
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes pulseGlowHead {
+      0%, 100% { stroke-opacity: 0.8; stroke-width: 4px; }
+      50% { stroke-opacity: 1; stroke-width: 6px; }
+    }
+    @keyframes snowDrift {
+      0% { transform: translateY(-15px) translateX(0px); opacity: 0; }
+      25% { opacity: 0.85; }
+      75% { opacity: 0.85; }
+      100% { transform: translateY(300px) translateX(25px); opacity: 0; }
+    }
+    .head-frame { animation: pulseGlowHead 3s ease-in-out infinite; }
+    .snow-p1 { animation: snowDrift 6s linear infinite; }
+    .snow-p2 { animation: snowDrift 8s linear infinite 2s; }
+    .snow-p3 { animation: snowDrift 7s linear infinite 4s; }
+    .snow-p4 { animation: snowDrift 9s linear infinite 1s; }
+    .font-title {
+      font-family: 'Fredoka', 'Balsamiq Sans', 'Segoe UI', Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+    .font-sub {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+    }
+  </style>
+
+  <!-- Drop Shadow Base & Outer Frame -->
+  <rect x="14" y="14" width="872" height="252" rx="26" fill="#002d55" stroke="#001e38" stroke-width="4" filter="url(#cpHeadShadow)" />
+
+  <!-- Main Blue Background -->
+  <rect x="18" y="18" width="864" height="244" rx="22" fill="url(#cpHeadBg)" />
+
+  <!-- Animated Glowing Cyan Frame -->
+  <rect class="head-frame" x="18" y="18" width="864" height="244" rx="22" fill="none" stroke="url(#cpHeadBorder)" stroke-width="4" />
+
+  <!-- Inner Dark Stroke -->
+  <rect x="24" y="24" width="852" height="232" rx="18" fill="none" stroke="#003e73" stroke-width="2" opacity="0.6" />
+
+  <!-- Top Gloss Highlight -->
+  <path d="M 22 22 L 878 22 C 878 22 878 95 865 110 C 640 145 260 120 22 90 Z" fill="url(#cpHeadGlass)" />
+
+  <!-- Snowfall Particles -->
+  <g opacity="0.75">
+    <circle class="snow-p1" cx="90" cy="20" r="3.5" fill="#ffffff" />
+    <circle class="snow-p2" cx="210" cy="10" r="4.5" fill="#e0f9ff" />
+    <circle class="snow-p3" cx="380" cy="30" r="3" fill="#ffffff" />
+    <circle class="snow-p4" cx="540" cy="15" r="4" fill="#e0f9ff" />
+    <circle class="snow-p1" cx="700" cy="25" r="3.5" fill="#ffffff" />
+    <circle class="snow-p2" cx="800" cy="10" r="4" fill="#e0f9ff" />
+    <circle class="snow-p3" cx="150" cy="20" r="2.5" fill="#ffffff" />
+    <circle class="snow-p4" cx="640" cy="20" r="3" fill="#ffffff" />
+  </g>
+
+  <!-- Left Igloo Vector Silhouette -->
+  <g transform="translate(60, 75)">
+    <path d="M 0 45 A 45 45 0 0 1 90 45 Z" fill="#e8f8ff" stroke="#00305a" stroke-width="4" />
+    <path d="M 8 45 A 37 37 0 0 1 82 45 Z" fill="#ffffff" />
+    <path d="M 16 28 Q 45 18 74 28" fill="none" stroke="#b3e5fc" stroke-width="3" />
+    <path d="M 30 14 Q 45 9 60 14" fill="none" stroke="#b3e5fc" stroke-width="2.5" />
+    <path d="M 32 45 A 13 18 0 0 1 58 45 Z" fill="#002244" stroke="#00305a" stroke-width="3" />
+    <!-- Heart Icon -->
+    <g transform="translate(45, -10)">
+      <circle cx="0" cy="0" r="14" fill="#ff2a6d" stroke="#ffffff" stroke-width="2.5" />
+      <path d="M -6 -2 A 3.5 3.5 0 0 1 0 1 A 3.5 3.5 0 0 1 6 -2 Q 6 4 0 8 Q -6 4 -6 -2 Z" fill="#ffffff" />
+    </g>
+  </g>
+
+  <!-- Right Snowflake Silhouette -->
+  <g transform="translate(755, 75)" stroke="#ffffff" stroke-width="3" opacity="0.4" stroke-linecap="round">
+    <line x1="45" y1="5" x2="45" y2="85" />
+    <line x1="5" y1="45" x2="85" y2="45" />
+    <line x1="16" y1="16" x2="74" y2="74" />
+    <line x1="16" y1="74" x2="74" y2="16" />
+    <circle cx="45" cy="45" r="6" fill="#00e5ff" />
+  </g>
+
+  <!-- Title: IGLOOLIKER 3000 with 3D Shadow -->
+  <text class="font-title" x="450" y="112" text-anchor="middle" font-size="46" fill="#001e38">IGLOOLIKER 3000</text>
+  <text class="font-title" x="450" y="110" text-anchor="middle" font-size="46" fill="#00284d">IGLOOLIKER 3000</text>
+  <text class="font-title" x="450" y="108" text-anchor="middle" font-size="46" fill="#003566">IGLOOLIKER 3000</text>
+  <text class="font-title" x="450" y="106" text-anchor="middle" font-size="46" fill="#ffffff">IGLOOLIKER 3000</text>
+
+  <!-- Subtitle Ribbon -->
+  <rect x="180" y="128" width="540" height="34" rx="17" fill="#002f5a" stroke="#00e5ff" stroke-width="2" opacity="0.95" />
+  <text class="font-sub" x="450" y="150" text-anchor="middle" font-size="13" fill="#66f3ff">
+    UNIVERSAL AFK IGLOO LIKES BOOSTER &#8226; CLUB PENGUIN JOURNEY
+  </text>
+
+  <!-- Bottom Badges Cluster -->
+  <!-- Badge 1: Version 3.0.0 -->
+  <g transform="translate(130, 185)">
+    <rect x="0" y="0" width="145" height="34" rx="17" fill="#003b70" stroke="#00e5ff" stroke-width="2" />
+    <text class="font-sub" x="72" y="22" text-anchor="middle" font-size="12" fill="#ffffff">VERSION 3.0.0</text>
+  </g>
+
+  <!-- Badge 2: Zero Disconnect -->
+  <g transform="translate(290, 185)">
+    <rect x="0" y="0" width="165" height="34" rx="17" fill="#003b70" stroke="#00e676" stroke-width="2" />
+    <circle cx="20" cy="17" r="5" fill="#00e676" />
+    <text class="font-sub" x="90" y="22" text-anchor="middle" font-size="12" fill="#ffffff">ZERO DISCONNECT</text>
+  </g>
+
+  <!-- Badge 3: Anti-Spam 9s-11s -->
+  <g transform="translate(470, 185)">
+    <rect x="0" y="0" width="170" height="34" rx="17" fill="#003b70" stroke="#ffcc00" stroke-width="2" />
+    <circle cx="20" cy="17" r="5" fill="#ffcc00" />
+    <text class="font-sub" x="92" y="22" text-anchor="middle" font-size="12" fill="#ffffff">ANTI-SPAM (9s-11s)</text>
+  </g>
+
+  <!-- Badge 4: Author CAIOVSKI -->
+  <g transform="translate(655, 185)">
+    <rect x="0" y="0" width="145" height="34" rx="17" fill="#002447" stroke="#00e5ff" stroke-width="2" />
+    <text class="font-sub" x="72" y="22" text-anchor="middle" font-size="12" fill="#00e5ff">BY CAIOVSKI</text>
+  </g>
+</svg>

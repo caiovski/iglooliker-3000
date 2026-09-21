@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/club-penguin-banner.svg" alt="IglooLiker 3000 Banner" width="100%" />
+<img src="assets/header-banner.svg" alt="IglooLiker 3000 Banner" width="100%" />
 
 <br />
 
@@ -222,8 +222,7 @@ Developed for educational and personal automation purposes. Club Penguin Journey
 
 <div align="center">
   <a href="https://github.com/caiovski">
-    <img src="https://img.shields.io/badge/CAIOVSKI-GitHub%20Profile-00284d?style=for-the-badge&logo=github&logoColor=00e5ff" alt="CAIOVSKI GitHub" />
+    <img src="assets/footer-banner.svg" alt="IglooLiker 3000 Footer Watermark" width="100%" />
   </a>
-  <br />
-  <sub><b>IGLOOLIKER 3000</b> &bull; Built with precision by <b>CAIOVSKI</b></sub>
 </div>
+

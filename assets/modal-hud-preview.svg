@@ -13,13 +13,7 @@
       <stop offset="100%" stop-color="#003666" />
     </linearGradient>
 
-    <!-- Start Button Gradient -->
-    <linearGradient id="btnStart" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#00c853" />
-      <stop offset="100%" stop-color="#009624" />
-    </linearGradient>
-
-    <!-- Header & Button Hover -->
+    <!-- Header & Button -->
     <linearGradient id="btnBlue" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#00b4ff" />
       <stop offset="100%" stop-color="#0077c4" />
@@ -28,7 +22,21 @@
     <!-- Progress Bar Gradient -->
     <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#00e5ff" />
+      <stop offset="50%" stop-color="#ffe853" />
       <stop offset="100%" stop-color="#00ff88" />
+    </linearGradient>
+
+    <!-- Animated Border Gradient -->
+    <linearGradient id="hudBorderGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff">
+        <animate attributeName="stop-color" values="#00e5ff;#7fe3ff;#0099ff;#00e5ff" dur="3s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="50%" stop-color="#7fe3ff">
+        <animate attributeName="stop-color" values="#7fe3ff;#00e5ff;#7fe3ff;#0077c4" dur="3s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="100%" stop-color="#0077c4">
+        <animate attributeName="stop-color" values="#0077c4;#00e5ff;#7fe3ff;#0077c4" dur="3s" repeatCount="indefinite" />
+      </stop>
     </linearGradient>
 
     <!-- Modal Shadow Filter -->
@@ -37,8 +45,22 @@
     </filter>
   </defs>
 
-  <!-- Outer Modal Container with CP Blue Frame and Cyan Borders -->
-  <rect x="15" y="15" width="390" height="540" rx="20" ry="20" fill="url(#modalBg)" stroke="#00e5ff" stroke-width="3.5" filter="url(#hudShadow)" />
+  <style>
+    @keyframes pulseHudBorder {
+      0%, 100% { stroke-opacity: 0.85; stroke-width: 3.5px; }
+      50% { stroke-opacity: 1; stroke-width: 5px; }
+    }
+    @keyframes pulseLiveDot {
+      0%, 100% { opacity: 0.7; r: 5; }
+      50% { opacity: 1; r: 6.5; }
+    }
+    .hud-frame-glow { animation: pulseHudBorder 3s ease-in-out infinite; }
+    .live-dot-anim { animation: pulseLiveDot 1.5s ease-in-out infinite; }
+  </style>
+
+  <!-- Outer Modal Container with CP Blue Frame and Animated Cyan Borders -->
+  <rect x="15" y="15" width="390" height="540" rx="20" ry="20" fill="url(#modalBg)" stroke="#00305a" stroke-width="4" filter="url(#hudShadow)" />
+  <rect class="hud-frame-glow" x="15" y="15" width="390" height="540" rx="20" ry="20" fill="none" stroke="url(#hudBorderGlow)" stroke-width="3.5" />
   <rect x="19" y="19" width="382" height="532" rx="16" ry="16" fill="none" stroke="#66f3ff" stroke-width="1.5" opacity="0.6" />
 
   <!-- Modal Header -->
@@ -66,7 +88,7 @@
   <!-- Status Bar Pill -->
   <g transform="translate(35, 92)">
     <rect x="0" y="0" width="350" height="34" rx="17" ry="17" fill="#003b70" stroke="#00e5ff" stroke-width="2" />
-    <circle cx="20" cy="17" r="5" fill="#2ed573" stroke="#ffffff" stroke-width="1.5" />
+    <circle class="live-dot-anim" cx="20" cy="17" r="5" fill="#2ed573" stroke="#ffffff" stroke-width="1.5" />
     <text x="35" y="22" font-family="'Segoe UI', Arial, sans-serif" font-weight="700" font-size="12" fill="#ffffff">
       Status: Active &amp; Dancing
     </text>
@@ -152,14 +174,14 @@
   <g transform="translate(35, 404)">
     <rect x="0" y="0" width="350" height="52" rx="12" ry="12" fill="#003b70" stroke="#00e5ff" stroke-width="1.5" />
     <text x="12" y="18" font-family="'Segoe UI', Arial, sans-serif" font-weight="700" font-size="11" fill="#8edeff">
-      NEXT ROTATING CHAT MESSAGE:
+      CURRENT ROTATING MESSAGE:
     </text>
     <text x="12" y="38" font-family="'Segoe UI', Arial, sans-serif" font-weight="600" font-size="11.5" fill="#ffffff">
       "Igloo liking party! Help me reach one k! Thanks..."
     </text>
   </g>
 
-  <!-- Big Start Button -->
+  <!-- Big Start Button (Positioned Directly Below Current Rotating Message) -->
   <g transform="translate(35, 474)">
     <rect x="0" y="0" width="350" height="52" rx="26" ry="26" fill="url(#btnBlue)" stroke="#00e5ff" stroke-width="3" />
     <rect x="4" y="4" width="342" height="20" rx="10" ry="10" fill="#ffffff" opacity="0.15" />
