@@ -23,6 +23,10 @@
         const pageBridgeScript = document.createElement('script');
         pageBridgeScript.textContent = `
             (function() {
+                let lastRoomId = null;
+                let lastMapOpen = false;
+                let lastPenguinName = null;
+
                 window.__CPJ_YUKON_BRIDGE__ = {
                     getGame() {
                         const games = [
@@ -57,18 +61,33 @@
                         }
                         return false;
                     },
-                    detectLikes() {
+                    detectPenguin() {
                         try {
                             const g = this.getGame();
                             if (g) {
                                 for (const sc of (g.scene?.scenes || [])) {
                                     const client = sc.world?.client || sc.client;
                                     if (client?.penguin) {
-                                        const l = client.penguin.iglooLikes ?? client.penguin.likes ?? client.penguin.igloo?.likes ?? client.iglooLikes;
-                                        if (typeof l === 'number') return l;
+                                        const u = client.penguin.username || client.penguin.name;
+                                        if (u) {
+                                            const l = client.penguin.iglooLikes ?? client.penguin.likes ?? client.penguin.igloo?.likes ?? client.iglooLikes;
+                                            return {
+                                                username: String(u).toLowerCase().trim(),
+                                                displayName: String(client.penguin.name || u),
+                                                id: client.penguin.id,
+                                                likes: typeof l === 'number' ? l : null
+                                            };
+                                        }
                                     }
                                 }
                             }
+                        } catch (e) {}
+                        return null;
+                    },
+                    detectLikes() {
+                        try {
+                            const p = this.detectPenguin();
+                            if (p && typeof p.likes === 'number') return p.likes;
                         } catch (e) {}
                         return null;
                     }
@@ -89,6 +108,58 @@
                     }
                 });
 
+                // Monitor contínuo de pinguim, sala e mapa
+                function bridgeTick() {
+                    try {
+                        const g = window.__CPJ_YUKON_BRIDGE__.getGame();
+                        if (!g) return;
+
+                        // 1. Detecção de Pinguim
+                        const pInfo = window.__CPJ_YUKON_BRIDGE__.detectPenguin();
+                        if (pInfo && pInfo.username) {
+                            if (lastPenguinName !== pInfo.username) {
+                                lastPenguinName = pInfo.username;
+                                window.postMessage({ type: 'CPJ_PENGUIN_SYNC', penguin: pInfo }, '*');
+                            }
+                        }
+
+                        // 2. Detecção de Mudança de Sala
+                        for (const sc of (g.scene?.scenes || [])) {
+                            const world = sc.world || sc;
+                            const client = world.client || sc.client;
+                            const curRoom = world.room?.id ?? client?.room?.id ?? client?.penguin?.room ?? world.roomKey;
+                            if (curRoom !== undefined && curRoom !== null) {
+                                if (lastRoomId !== null && lastRoomId !== curRoom) {
+                                    window.postMessage({ type: 'CPJ_ROOM_CHANGED', oldRoom: lastRoomId, newRoom: curRoom }, '*');
+                                }
+                                lastRoomId = curRoom;
+                                break;
+                            }
+                        }
+
+                        // 3. Detecção de Abertura do Mapa
+                        let isMapOpen = false;
+                        for (const sc of (g.scene?.scenes || [])) {
+                            const key = (sc.scene?.key || sc.sys?.settings?.key || '').toLowerCase();
+                            if (key.includes('map')) {
+                                if (sc.scene?.isActive?.() || sc.sys?.settings?.visible || sc.sys?.isVisible?.()) {
+                                    isMapOpen = true;
+                                    break;
+                                }
+                            }
+                            if (sc.interface?.map?.visible || sc.world?.client?.interface?.map?.visible || sc.world?.client?.interface?.main?.map?.visible) {
+                                isMapOpen = true;
+                                break;
+                            }
+                        }
+                        if (isMapOpen && !lastMapOpen) {
+                            window.postMessage({ type: 'CPJ_MAP_OPENED' }, '*');
+                        }
+                        lastMapOpen = isMapOpen;
+                    } catch (e) {}
+                }
+                setInterval(bridgeTick, 500);
+
                 // Hook contínuo de pacotes recebidos
                 function setupPacketHook() {
                     try {
@@ -101,9 +172,13 @@
                                 net.onMessage = function(message) {
                                     try {
                                         const args = message?.args || message;
+                                        const action = message?.action || message?.type;
                                         const likes = args?.likes ?? args?.iglooLikes ?? args?.igloo?.likes;
                                         if (typeof likes === 'number' && likes >= 0) {
                                             window.postMessage({ type: 'CPJ_LIKES_SYNC', likes: likes }, '*');
+                                        }
+                                        if (action === 'join_room' || action === 'jr' || action === 'join_igloo') {
+                                            window.postMessage({ type: 'CPJ_ROOM_CHANGED', action: action }, '*');
                                         }
                                     } catch (e) {}
                                     return origOnMessage.apply(this, arguments);
@@ -595,54 +670,127 @@
             font-size: calc(12px * var(--cpj-scale, 1)) !important;
             font-weight: 900 !important;
         }
+        .cpj-slider-track-wrap {
+            position: relative !important;
+            width: 100% !important;
+            height: 30px !important;
+            display: flex !important;
+            align-items: center !important;
+            margin: 4px 0 !important;
+            user-select: none !important;
+            box-sizing: border-box !important;
+        }
+        .cpj-slider-visual-track {
+            position: absolute !important;
+            left: 0 !important;
+            right: 0 !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            height: 16px !important;
+            background: #ffffff !important;
+            border: 2px solid #00284d !important;
+            border-radius: 8px !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4) !important;
+            overflow: hidden !important;
+            pointer-events: none !important;
+            box-sizing: border-box !important;
+            z-index: 1 !important;
+        }
+        .cpj-slider-visual-fill {
+            height: 100% !important;
+            background: #ff8800 !important;
+            border-radius: 6px 0 0 6px !important;
+            pointer-events: none !important;
+        }
+        .cpj-slider-visual-thumb {
+            position: absolute !important;
+            top: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: 28px !important;
+            height: 28px !important;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M 3.5 14.5 C 3.2 18.2 5.2 23 9.5 24.5 C 14.2 25.8 20.5 24.8 23.5 21 C 25.5 18.5 25.8 13.8 24.2 10.5 C 22.8 7.5 19.5 4.2 15.5 3.5 C 11.2 2.8 6.2 6.2 4.2 10.5 C 3.5 11.8 3.6 13.2 3.5 14.5 Z' fill='%23526377' stroke='%2300284d' stroke-width='2.6' stroke-linejoin='round'/%3E%3Cpath d='M 5.2 13 C 5 9.5 7.5 5.5 12.2 4.5 C 16.5 3.5 21.2 6 23 10 C 24.2 13 23.8 17 21 19.2 C 18 21.5 13.2 22 9.5 19.8 C 7 18 5.4 15.5 5.2 13 Z' fill='%23ffffff'/%3E%3C/svg%3E") center / contain no-repeat !important;
+            filter: drop-shadow(0 2.5px 7px rgba(0, 0, 0, 0.7)) !important;
+            border: none !important;
+            box-shadow: none !important;
+            pointer-events: none !important;
+            box-sizing: border-box !important;
+            z-index: 2 !important;
+            transition: transform 0.15s ease !important;
+        }
+        .cpj-slider-track-wrap:hover .cpj-slider-visual-thumb {
+            transform: translate(-50%, -50%) scale(1.15) !important;
+        }
         .cpj-snow-slider {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            opacity: 0 !important;
+            cursor: pointer !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            z-index: 3 !important;
             -webkit-appearance: none !important;
             -moz-appearance: none !important;
             appearance: none !important;
-            display: block !important;
-            width: 100% !important;
-            height: calc(12px * var(--cpj-scale, 1)) !important;
-            background: #ffffff !important;
-            border-radius: calc(6px * var(--cpj-scale, 1)) !important;
-            outline: none !important;
-            border: 2px solid #00284d !important;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4) !important;
-            cursor: pointer !important;
-            margin: calc(8px * var(--cpj-scale, 1)) 0 !important;
-            padding: 0 !important;
-        }
-        .cpj-snow-slider::-moz-range-track {
-            background: transparent !important;
-            border: none !important;
-            height: calc(12px * var(--cpj-scale, 1)) !important;
-        }
-        .cpj-snow-slider::-moz-range-progress {
-            background: transparent !important;
-        }
-        .cpj-snow-slider::-webkit-slider-thumb {
-            -webkit-appearance: none !important;
-            appearance: none !important;
-            width: calc(22px * var(--cpj-scale, 1)) !important;
-            height: calc(22px * var(--cpj-scale, 1)) !important;
-            border-radius: 50% !important;
-            background: #ffffff !important;
-            border: 2.5px solid #00e5ff !important;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.5) !important;
-            cursor: pointer !important;
-            transition: transform 0.1s ease !important;
-        }
-        .cpj-snow-slider::-webkit-slider-thumb:hover { transform: scale(1.15) !important; }
-        .cpj-snow-slider::-moz-range-thumb {
-            width: calc(22px * var(--cpj-scale, 1)) !important;
-            height: calc(22px * var(--cpj-scale, 1)) !important;
-            border-radius: 50% !important;
-            background: #ffffff !important;
-            border: 2.5px solid #00e5ff !important;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.5) !important;
-            cursor: pointer !important;
         }
 
-        /* Phrases Studio CRUD */
+        /* Phrases Studio CRUD & Feedback Banners */
+        .cpj-studio-msg {
+            display: flex !important;
+            align-items: center !important;
+            gap: calc(8px * var(--cpj-scale, 1)) !important;
+            border-radius: calc(8px * var(--cpj-scale, 1)) !important;
+            padding: calc(7px * var(--cpj-scale, 1)) calc(10px * var(--cpj-scale, 1)) !important;
+            margin-bottom: calc(8px * var(--cpj-scale, 1)) !important;
+            font-size: calc(11px * var(--cpj-scale, 1)) !important;
+            font-weight: 700 !important;
+            line-height: 1.35 !important;
+            box-sizing: border-box !important;
+            animation: cpjMsgIn 0.2s ease-out !important;
+        }
+        @keyframes cpjMsgIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .cpj-studio-msg.hidden {
+            display: none !important;
+        }
+        .cpj-studio-msg.error {
+            background: #52161b !important;
+            border: 1.5px solid #ff4d6d !important;
+            color: #ffccd5 !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+        }
+        .cpj-studio-msg.success {
+            background: #16532d !important;
+            border: 1.5px solid #22c55e !important;
+            color: #bbf7d0 !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+        }
+        .cpj-studio-msg-icon {
+            width: calc(20px * var(--cpj-scale, 1)) !important;
+            height: calc(20px * var(--cpj-scale, 1)) !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+        .cpj-studio-msg.error .cpj-studio-msg-icon {
+            background: #ff4d6d !important;
+        }
+        .cpj-studio-msg.success .cpj-studio-msg-icon {
+            background: #22c55e !important;
+            box-shadow: 0 0 6px rgba(34, 197, 94, 0.6) !important;
+        }
+        .cpj-studio-msg-icon svg {
+            display: block !important;
+        }
+        .cpj-studio-msg-text {
+            flex: 1 !important;
+        }
         .cpj-studio-input-wrap {
             display: flex !important;
             gap: calc(6px * var(--cpj-scale, 1)) !important;
@@ -790,6 +938,124 @@
             width: calc(13px * var(--cpj-scale, 1)) !important;
             height: calc(13px * var(--cpj-scale, 1)) !important;
         }
+
+        /* 2.1 Modal Escuro de Prompt In-DOM ("Telinha Preta" não-bloqueante) */
+        .cpj-dark-prompt-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: rgba(0, 0, 0, 0.65) !important;
+            backdrop-filter: blur(2px) !important;
+            z-index: 2147483647 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            user-select: none !important;
+            isolation: isolate !important;
+        }
+        .cpj-dark-prompt-card {
+            background: #1c1b22 !important;
+            border: 1px solid #2f303d !important;
+            border-radius: 16px !important;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85) !important;
+            padding: 20px 22px !important;
+            width: 360px !important;
+            max-width: 90vw !important;
+            box-sizing: border-box !important;
+            font-family: 'Fredoka', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+            animation: cpjPromptIn 0.15s ease-out !important;
+        }
+        @keyframes cpjPromptIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .cpj-dark-prompt-header {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            margin-bottom: 14px !important;
+        }
+        .cpj-dark-prompt-header svg {
+            flex-shrink: 0 !important;
+            width: 20px !important;
+            height: 20px !important;
+        }
+        .cpj-dark-prompt-domain {
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            color: #ffffff !important;
+            letter-spacing: -0.2px !important;
+        }
+        .cpj-dark-prompt-label {
+            font-size: 13.5px !important;
+            font-weight: 600 !important;
+            color: #f1f5f9 !important;
+            margin-bottom: 12px !important;
+            word-break: break-word !important;
+        }
+        .cpj-dark-prompt-input {
+            width: 100% !important;
+            background: #101014 !important;
+            border: 2px solid #00cbf7 !important;
+            border-radius: 12px !important;
+            padding: 9px 14px !important;
+            font-size: 13.5px !important;
+            color: #ffffff !important;
+            outline: none !important;
+            box-sizing: border-box !important;
+            box-shadow: 0 0 0 1px rgba(0, 203, 247, 0.3) !important;
+            margin-bottom: 18px !important;
+            font-family: inherit !important;
+        }
+        .cpj-dark-prompt-input:focus {
+            border-color: #00e5ff !important;
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.35) !important;
+        }
+        .cpj-dark-prompt-actions {
+            display: flex !important;
+            justify-content: flex-end !important;
+            gap: 10px !important;
+        }
+        .cpj-dark-btn-ok {
+            background: #00cbf7 !important;
+            color: #00223a !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            border: none !important;
+            border-radius: 9px !important;
+            padding: 8px 20px !important;
+            cursor: pointer !important;
+            font-family: inherit !important;
+            transition: background 0.15s ease, transform 0.1s ease !important;
+        }
+        .cpj-dark-btn-ok:hover {
+            background: #38d8fc !important;
+        }
+        .cpj-dark-btn-ok:active {
+            transform: scale(0.97) !important;
+        }
+        .cpj-dark-btn-cancel {
+            background: #2b2b36 !important;
+            color: #ffffff !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            border: none !important;
+            border-radius: 9px !important;
+            padding: 8px 18px !important;
+            cursor: pointer !important;
+            font-family: inherit !important;
+            transition: background 0.15s ease, transform 0.1s ease !important;
+        }
+        .cpj-dark-btn-cancel:hover {
+            background: #3a3a49 !important;
+        }
+        .cpj-dark-btn-cancel:active {
+            transform: scale(0.97) !important;
+        }
     `;
     const styleEl = document.createElement('style');
     styleEl.textContent = css;
@@ -825,7 +1091,9 @@
             studioPlaceholder: "Type new like phrase...",
             studioAdd: "+ ADD",
             studioCap: "Slot: ",
-            studioMaxAlert: "Maximum 6 phrases reached!",
+            studioMaxAlert: "Cannot add new phrases because maximum capacity (6 phrases) is reached.",
+            studioEmptyAlert: "Write something in the field to add a new phrase!",
+            studioSuccessAlert: "Phrase added successfully!",
             editPrompt: "Edit phrase:"
         },
         pt: {
@@ -856,14 +1124,17 @@
             studioPlaceholder: "Digite a nova frase...",
             studioAdd: "+ ADICIONAR",
             studioCap: "Slot: ",
-            studioMaxAlert: "Limite máximo de 6 frases atingido!",
+            studioMaxAlert: "Não é possível adicionar novas frases pois atingiu a capacidade máxima.",
+            studioEmptyAlert: "Escreva algo no campo para inserir a nova frase!",
+            studioSuccessAlert: "Frase adicionada com sucesso!",
             editPrompt: "Editar frase:"
         }
     };
 
-    // 4. Estado Reativo com Segregação (sessionStorage para abas, localStorage para frases e meta)
+    // 4. Estado Reativo com Segregação (sessionStorage para abas, localStorage para frases e perfis por pinguim)
     const SESSION_KEY = 'cpj_tab_state_v3';
     const SHARED_KEY = 'cpj_shared_data_v3';
+    const PENGUIN_KEY_PREFIX = 'cpj_penguin_v3_';
 
     const defaultPhrases = [
         { text: "Igloo liking party! Help me reach one k! Thanks for your support", enabled: true },
@@ -873,7 +1144,8 @@
     ];
 
     const state = {
-        // Tab-specific (sessionStorage)
+        // Tab-specific & Penguin identity
+        currentPenguin: null,
         running: false,
         autoDance: true,
         autoWave: false,
@@ -896,14 +1168,66 @@
         error: null,
         pIdx: 0,
 
+        loadPenguin(username) {
+            if (!username) return;
+            this.currentPenguin = String(username).toLowerCase().trim();
+            try {
+                const raw = localStorage.getItem(PENGUIN_KEY_PREFIX + this.currentPenguin);
+                if (raw) {
+                    const p = JSON.parse(raw);
+                    this.likes = (p.likes !== undefined) ? Number(p.likes) || 0 : 0;
+                    this.goal = (p.goal !== undefined) ? Number(p.goal) || 1000 : 1000;
+                    this.autoDance = (p.autoDance !== undefined) ? !!p.autoDance : true;
+                    this.autoWave = (p.autoWave !== undefined) ? !!p.autoWave : false;
+                    this.repeatAction = (p.repeatAction !== undefined) ? !!p.repeatAction : false;
+                    this.actionInterval = (p.actionInterval !== undefined) ? Math.max(5, Math.min(10, Number(p.actionInterval) || 7)) : 7;
+                    this.deactivatePhrases = (p.deactivatePhrases !== undefined) ? !!p.deactivatePhrases : false;
+                    this.rotatePhrases = (p.rotatePhrases !== undefined) ? !!p.rotatePhrases : true;
+                    this.randomInterval = (p.randomInterval !== undefined) ? !!p.randomInterval : true;
+                } else {
+                    this.likes = 0;
+                    this.goal = 1000;
+                    this.autoDance = true;
+                    this.autoWave = false;
+                    this.repeatAction = false;
+                    this.actionInterval = 7;
+                    this.deactivatePhrases = false;
+                    this.rotatePhrases = true;
+                    this.randomInterval = true;
+                    this.savePenguin();
+                }
+            } catch (e) { }
+            this.validate();
+            updateUI();
+        },
+
+        savePenguin() {
+            const dataToSave = {
+                likes: this.likes,
+                goal: this.goal,
+                autoDance: this.autoDance,
+                autoWave: this.autoWave,
+                repeatAction: this.repeatAction,
+                actionInterval: this.actionInterval,
+                deactivatePhrases: this.deactivatePhrases,
+                rotatePhrases: this.rotatePhrases,
+                randomInterval: this.randomInterval
+            };
+            const key = this.currentPenguin ? (PENGUIN_KEY_PREFIX + this.currentPenguin) : (PENGUIN_KEY_PREFIX + '_default');
+            try {
+                localStorage.setItem(key, JSON.stringify(dataToSave));
+            } catch (e) { }
+            this.saveSession();
+        },
+
         load() {
             // 1. Carrega dados compartilhados do localStorage
             try {
                 const rawShared = localStorage.getItem(SHARED_KEY);
                 if (rawShared) {
                     const parsed = JSON.parse(rawShared);
-                    if (parsed.goal) this.goal = Number(parsed.goal) || 1000;
-                    if (parsed.likes) this.likes = Number(parsed.likes) || 0;
+                    if (parsed.goal && !this.currentPenguin) this.goal = Number(parsed.goal) || 1000;
+                    if (parsed.likes && !this.currentPenguin) this.likes = Number(parsed.likes) || 0;
                     if (parsed.lang && (parsed.lang === 'en' || parsed.lang === 'pt')) this.lang = parsed.lang;
                     if (Array.isArray(parsed.phrases) && parsed.phrases.length > 0) {
                         this.phrases = parsed.phrases.slice(0, 6).map(p => {
@@ -920,13 +1244,13 @@
                 const rawSession = sessionStorage.getItem(SESSION_KEY);
                 if (rawSession) {
                     const parsed = JSON.parse(rawSession);
-                    if (parsed.autoDance !== undefined) this.autoDance = !!parsed.autoDance;
-                    if (parsed.autoWave !== undefined) this.autoWave = !!parsed.autoWave;
-                    if (parsed.repeatAction !== undefined) this.repeatAction = !!parsed.repeatAction;
-                    if (parsed.actionInterval !== undefined) this.actionInterval = Number(parsed.actionInterval) || 7;
-                    if (parsed.rotatePhrases !== undefined) this.rotatePhrases = !!parsed.rotatePhrases;
-                    if (parsed.randomInterval !== undefined) this.randomInterval = !!parsed.randomInterval;
-                    if (parsed.deactivatePhrases !== undefined) this.deactivatePhrases = !!parsed.deactivatePhrases;
+                    if (parsed.autoDance !== undefined && !this.currentPenguin) this.autoDance = !!parsed.autoDance;
+                    if (parsed.autoWave !== undefined && !this.currentPenguin) this.autoWave = !!parsed.autoWave;
+                    if (parsed.repeatAction !== undefined && !this.currentPenguin) this.repeatAction = !!parsed.repeatAction;
+                    if (parsed.actionInterval !== undefined && !this.currentPenguin) this.actionInterval = Number(parsed.actionInterval) || 7;
+                    if (parsed.rotatePhrases !== undefined && !this.currentPenguin) this.rotatePhrases = !!parsed.rotatePhrases;
+                    if (parsed.randomInterval !== undefined && !this.currentPenguin) this.randomInterval = !!parsed.randomInterval;
+                    if (parsed.deactivatePhrases !== undefined && !this.currentPenguin) this.deactivatePhrases = !!parsed.deactivatePhrases;
                     if (parsed.activeTab) this.activeTab = parsed.activeTab;
                 }
             } catch (e) { }
@@ -937,8 +1261,6 @@
         saveShared() {
             try {
                 localStorage.setItem(SHARED_KEY, JSON.stringify({
-                    goal: this.goal,
-                    likes: this.likes,
                     lang: this.lang,
                     phrases: this.phrases
                 }));
@@ -1233,17 +1555,58 @@
         botTimer = setTimeout(botTick, delay);
     }
 
-    // Sincronização de likes em tempo real
-    window.addEventListener('message', (e) => {
-        if (e.data && e.data.type === 'CPJ_LIKES_SYNC' && typeof e.data.likes === 'number' && e.data.likes !== state.likes) {
-            state.likes = e.data.likes;
-            state.saveShared();
-            state.validate();
+    let lastDetectedRoom = null;
+
+    function pauseBotAuto() {
+        if (state.running) {
+            state.running = false;
+            if (botTimer) {
+                clearTimeout(botTimer);
+                botTimer = null;
+            }
+            stopActionLoop();
+            state.danced = false;
+            state.actionDispatched = false;
             updateUI();
+        }
+    }
+
+    // Sincronização e detecção em tempo real via bridge
+    window.addEventListener('message', (e) => {
+        if (!e.data) return;
+        if (e.data.type === 'CPJ_PENGUIN_SYNC' && e.data.penguin && e.data.penguin.username) {
+            const p = e.data.penguin;
+            const switched = (state.currentPenguin !== p.username);
+            state.loadPenguin(p.username);
+            if (switched && state.running && state.repeatAction) {
+                startActionLoop();
+            }
+        } else if (e.data.type === 'CPJ_ROOM_CHANGED' || e.data.type === 'CPJ_MAP_OPENED') {
+            pauseBotAuto();
         }
     });
 
-    // Sincronização de frases/idioma entre abas de diferentes pinguins em tempo real
+    // Atalho de tecla 'M' no jogo para abrir mapa -> pausa bot automaticamente
+    window.addEventListener('keydown', (e) => {
+        if ((e.key === 'm' || e.key === 'M') && !e.target.closest('input, textarea, #cpj-modal, #cpj-dark-prompt-overlay, .cpj-dark-prompt-overlay')) {
+            pauseBotAuto();
+        }
+    }, true);
+
+    // Detecção de clique no botão do mapa na barra inferior do jogo CPJ
+    window.addEventListener('pointerdown', (e) => {
+        const canvas = document.querySelector('canvas');
+        if (canvas && e.target === canvas) {
+            const rect = canvas.getBoundingClientRect();
+            const relX = e.clientX - rect.left;
+            const relY = e.clientY - rect.top;
+            if (relX >= 0 && relX <= (rect.width * 0.16) && relY >= (rect.height * 0.86)) {
+                pauseBotAuto();
+            }
+        }
+    }, true);
+
+    // Sincronização de frases/idioma entre abas em tempo real
     window.addEventListener('storage', (e) => {
         if (e.key === SHARED_KEY) {
             state.load();
@@ -1253,41 +1616,59 @@
         }
     });
 
-    function queryLikesFromBridge() {
-        if (pageWin.__CPJ_YUKON_BRIDGE__) {
-            const l = pageWin.__CPJ_YUKON_BRIDGE__.detectLikes();
-            if (typeof l === 'number' && l !== state.likes) {
-                state.likes = l;
-                state.saveShared();
-                state.validate();
-                updateUI();
-                return;
-            }
-        }
+    function queryGameSafetyAndPenguin() {
         try {
             const games = [
                 pageWin.game,
                 pageWin.yukon?.game,
+                pageWin.world?.game,
+                pageWin.air?.game,
                 ...(pageWin.Phaser?.GAMES ? Object.values(pageWin.Phaser.GAMES) : [])
             ].filter(Boolean);
+
             for (const g of games) {
-                for (const sc of (g.scene?.scenes || [])) {
-                    const client = sc.world?.client || sc.client;
+                const scenes = g.scene?.scenes || [];
+                for (const sc of scenes) {
+                    const world = sc.world || sc;
+                    const client = world.client || sc.client;
+
+                    // 1. Detecção do Pinguim Logado
                     if (client?.penguin) {
-                        const l = client.penguin.iglooLikes ?? client.penguin.likes ?? client.penguin.igloo?.likes ?? client.iglooLikes;
-                        if (typeof l === 'number' && l !== state.likes) {
-                            state.likes = l;
-                            state.saveShared();
-                            state.validate();
-                            updateUI();
-                            return;
+                        const u = client.penguin.username || client.penguin.name;
+                        if (u) {
+                            const norm = String(u).toLowerCase().trim();
+                            if (state.currentPenguin !== norm) {
+                                state.loadPenguin(norm);
+                            }
                         }
+                    }
+
+                    // 2. Detecção de Mudança de Sala
+                    const curRoom = world.room?.id ?? client?.room?.id ?? client?.penguin?.room ?? world.roomKey;
+                    if (curRoom !== undefined && curRoom !== null) {
+                        if (lastDetectedRoom !== null && lastDetectedRoom !== curRoom && state.running) {
+                            pauseBotAuto();
+                        }
+                        lastDetectedRoom = curRoom;
+                    }
+
+                    // 3. Detecção de Abertura do Mapa
+                    const key = (sc.scene?.key || sc.sys?.settings?.key || '').toLowerCase();
+                    let isMapOpen = false;
+                    if (key.includes('map') && (sc.scene?.isActive?.() || sc.sys?.settings?.visible || sc.sys?.isVisible?.())) {
+                        isMapOpen = true;
+                    }
+                    if (sc.interface?.map?.visible || client?.interface?.map?.visible || client?.interface?.main?.map?.visible) {
+                        isMapOpen = true;
+                    }
+                    if (isMapOpen && state.running) {
+                        pauseBotAuto();
                     }
                 }
             }
         } catch (e) { }
     }
-    setInterval(queryLikesFromBridge, 3000);
+    setInterval(queryGameSafetyAndPenguin, 300);
 
     // 7. Construção do Modal e Interface Club Penguin
     const launcher = document.createElement('div');
@@ -1414,7 +1795,13 @@
                         <span id="cpj-lbl-slider">Action Interval:</span>
                         <span class="cpj-slider-pill" id="cpj-slider-val">${state.actionInterval}s</span>
                     </div>
-                    <input type="range" min="5" max="10" step="1" value="${state.actionInterval}" class="cpj-snow-slider" id="cpj-slider">
+                    <div class="cpj-slider-track-wrap" id="cpj-track-wrap" style="position:relative!important;width:100%!important;height:30px!important;display:flex!important;align-items:center!important;margin:4px 0!important;user-select:none!important;box-sizing:border-box!important;cursor:pointer!important;">
+                        <div class="cpj-slider-visual-track" style="position:absolute!important;left:0!important;right:0!important;top:50%!important;transform:translateY(-50%)!important;height:16px!important;background:#ffffff!important;border:2px solid #00284d!important;border-radius:8px!important;box-shadow:inset 0 2px 4px rgba(0,0,0,0.4)!important;overflow:hidden!important;pointer-events:none!important;box-sizing:border-box!important;z-index:1!important;">
+                            <div class="cpj-slider-visual-fill" id="cpj-slider-fill" style="height:100%!important;width:calc(14px + (100% - 28px) * ${(state.actionInterval - 5) / 5});background:#ff8800!important;border-radius:6px 0 0 6px!important;pointer-events:none!important;"></div>
+                        </div>
+                        <div class="cpj-slider-visual-thumb" id="cpj-slider-thumb" style="position:absolute!important;top:50%!important;left:calc(14px + (100% - 28px) * ${(state.actionInterval - 5) / 5});transform:translate(-50%,-50%)!important;pointer-events:none!important;z-index:2!important;cursor:pointer!important;"></div>
+                        <input type="range" min="5" max="10" step="1" value="${state.actionInterval}" class="cpj-snow-slider" id="cpj-slider" style="position:absolute!important;left:0!important;top:0!important;width:100%!important;height:100%!important;opacity:0!important;pointer-events:none!important;margin:0!important;padding:0!important;z-index:3!important;-webkit-appearance:none!important;-moz-appearance:none!important;appearance:none!important;">
+                    </div>
                     <div style="display:flex;justify-content:space-between;font-size:10px;color:#8edeff;font-weight:700;margin-top:4px;">
                         <span>5s</span>
                         <span>10s</span>
@@ -1424,6 +1811,7 @@
 
             <!-- Painel 3: Phrases Studio (CRUD) -->
             <div class="cpj-tab-panel ${state.activeTab === 'studio' ? 'active' : ''}" id="cpj-panel-studio">
+                <div class="cpj-studio-msg hidden" id="cpj-studio-msg"></div>
                 <div class="cpj-studio-input-wrap">
                     <input type="text" class="cpj-studio-input" id="cpj-studio-inp" placeholder="${state.lang === 'pt' ? 'Digite a nova frase...' : 'Type new phrase...'}" maxlength="100">
                     <button class="cpj-btn-add" id="cpj-studio-add">+ ADD</button>
@@ -1443,16 +1831,21 @@
     document.body.appendChild(modal);
 
     // 8. Funções de Renderização e Atualização da UI
-    function updateSliderFill() {
-        const slider = document.getElementById('cpj-slider');
-        if (!slider) return;
-        const min = Number(slider.min) || 5;
-        const max = Number(slider.max) || 10;
-        const val = Number(slider.value) || 7;
-        const pct = Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
-        slider.style.setProperty('background', `linear-gradient(to right, #ff8800 0%, #ff8800 ${pct}%, #ffffff ${pct}%, #ffffff 100%)`, 'important');
+    function renderSliderVisuals(ratio, secVal) {
+        const clampedRatio = Math.max(0, Math.min(1, ratio));
+        const posCalc = `calc(14px + (100% - 28px) * ${clampedRatio})`;
+        const fillEl = document.getElementById('cpj-slider-fill');
+        if (fillEl) fillEl.style.setProperty('width', posCalc, 'important');
+        const thumbEl = document.getElementById('cpj-slider-thumb');
+        if (thumbEl) thumbEl.style.setProperty('left', posCalc, 'important');
         const valEl = document.getElementById('cpj-slider-val');
-        if (valEl) valEl.textContent = `${val}s`;
+        if (valEl) valEl.textContent = `${secVal}s`;
+    }
+
+    function updateSliderFill() {
+        const val = Math.max(5, Math.min(10, Number(state.actionInterval) || 7));
+        const finalRatio = (val - 5) / 5;
+        renderSliderVisuals(finalRatio, val);
     }
 
     function renderStudioList() {
@@ -1556,6 +1949,11 @@
         const sliderBox = document.getElementById('cpj-slider-box');
         if (sliderBox) sliderBox.classList.toggle('hidden', !state.repeatAction);
 
+        const slider = document.getElementById('cpj-slider');
+        if (slider && document.activeElement !== slider) {
+            slider.value = state.actionInterval;
+        }
+
         // Status text
         const sdot = document.getElementById('cpj-sdot');
         const stxt = document.getElementById('cpj-stxt');
@@ -1640,7 +2038,7 @@
         const clean = e.target.value.replace(/\D/g, '');
         e.target.value = clean;
         state.likes = parseInt(clean, 10) || 0;
-        state.saveShared();
+        state.savePenguin();
         state.validate();
         updateUI();
     });
@@ -1649,7 +2047,7 @@
         const clean = e.target.value.replace(/\D/g, '');
         e.target.value = clean;
         state.goal = parseInt(clean, 10) || 0;
-        state.saveShared();
+        state.savePenguin();
         state.validate();
         updateUI();
     });
@@ -1657,95 +2055,276 @@
     // Checkboxes da Aba Phrases
     document.getElementById('cpj-opt-rotate').addEventListener('click', () => {
         state.rotatePhrases = !state.rotatePhrases;
-        state.saveSession();
+        state.savePenguin();
         updateUI();
     });
 
     document.getElementById('cpj-opt-jitter').addEventListener('click', () => {
         state.randomInterval = !state.randomInterval;
-        state.saveSession();
+        state.savePenguin();
         updateUI();
     });
 
     document.getElementById('cpj-opt-deact').addEventListener('click', () => {
         state.deactivatePhrases = !state.deactivatePhrases;
-        state.saveSession();
+        state.savePenguin();
         updateUI();
     });
 
     // Checkboxes da Aba Actions
     document.getElementById('cpj-opt-dance').addEventListener('click', () => {
         state.autoDance = !state.autoDance;
-        state.saveSession();
+        state.savePenguin();
         updateUI();
     });
 
     document.getElementById('cpj-opt-wave').addEventListener('click', () => {
         state.autoWave = !state.autoWave;
-        state.saveSession();
+        state.savePenguin();
         updateUI();
     });
 
     document.getElementById('cpj-opt-repeat').addEventListener('click', () => {
         state.repeatAction = !state.repeatAction;
-        state.saveSession();
+        state.savePenguin();
         if (state.running) {
             startActionLoop();
         }
         updateUI();
     });
 
-    // Slider de Intervalo de Ação
+    // Slider de Intervalo de Ação (Arrasto Suave Contínuo + Snap Preciso)
+    const trackWrap = document.getElementById('cpj-track-wrap');
     const sliderEl = document.getElementById('cpj-slider');
-    sliderEl.addEventListener('input', (e) => {
-        state.actionInterval = Number(e.target.value) || 7;
-        state.saveSession();
-        updateSliderFill();
-        if (state.running && state.repeatAction) {
-            startActionLoop();
-        }
-    });
 
-    // Phrases Studio CRUD
+    function applyInterval(val, save = true) {
+        val = Math.max(5, Math.min(10, Math.round(val)));
+        state.actionInterval = val;
+        if (sliderEl && sliderEl.value != val) sliderEl.value = val;
+        const finalRatio = (val - 5) / 5;
+        renderSliderVisuals(finalRatio, val);
+        if (save) {
+            state.savePenguin();
+            if (state.running && state.repeatAction) {
+                startActionLoop();
+            }
+        }
+    }
+
+    let isSliding = false;
+
+    function handlePointerCoord(clientX, isDragging) {
+        if (!trackWrap) return;
+        const rect = trackWrap.getBoundingClientRect();
+        if (rect.width <= 0) return;
+        const clickX = clientX - rect.left;
+        const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+        const currentSec = Math.max(5, Math.min(10, Math.round(5 + ratio * 5)));
+
+        if (isDragging) {
+            // A bolinha segue suavemente o cursor do mouse na exata posição horizontal
+            renderSliderVisuals(ratio, currentSec);
+            state.actionInterval = currentSec;
+            if (sliderEl) sliderEl.value = currentSec;
+        } else {
+            // Clique pontual ou soltura: dá snap na posição exata daquele segundo
+            applyInterval(currentSec, true);
+        }
+    }
+
+    function onSliderMove(e) {
+        if (!isSliding) return;
+        handlePointerCoord(e.clientX, true);
+        e.preventDefault();
+    }
+
+    function onSliderUp(e) {
+        if (!isSliding) return;
+        isSliding = false;
+        window.removeEventListener('pointermove', onSliderMove, true);
+        window.removeEventListener('pointerup', onSliderUp, true);
+        window.removeEventListener('pointercancel', onSliderUp, true);
+        try { trackWrap.releasePointerCapture?.(e.pointerId); } catch (_) { }
+        handlePointerCoord(e.clientX, false);
+        e.preventDefault();
+    }
+
+    if (trackWrap) {
+        trackWrap.addEventListener('pointerdown', (e) => {
+            isSliding = true;
+            try { trackWrap.setPointerCapture?.(e.pointerId); } catch (_) { }
+            window.addEventListener('pointermove', onSliderMove, true);
+            window.addEventListener('pointerup', onSliderUp, true);
+            window.addEventListener('pointercancel', onSliderUp, true);
+            handlePointerCoord(e.clientX, true);
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
+
+    if (sliderEl) {
+        sliderEl.addEventListener('input', (e) => applyInterval(Number(e.target.value) || 7, true));
+        sliderEl.addEventListener('change', (e) => applyInterval(Number(e.target.value) || 7, true));
+    }
+
+    // Modal Escuro Assíncrono In-DOM ("Telinha Preta" que previne disconnect de WebSocket)
+    function showDarkPrompt(messageText, defaultVal = '') {
+        return new Promise((resolve) => {
+            const overlay = document.createElement('div');
+            overlay.className = 'cpj-dark-prompt-overlay';
+
+            const card = document.createElement('div');
+            card.className = 'cpj-dark-prompt-card';
+
+            const domain = window.location.hostname || 'play.cpjourney.net';
+            const okText = 'OK';
+            const cancelText = state.lang === 'pt' ? 'Cancelar' : 'Cancel';
+
+            card.innerHTML = `
+                <div class="cpj-dark-prompt-header">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                    <span class="cpj-dark-prompt-domain">${domain}</span>
+                </div>
+                <div class="cpj-dark-prompt-label">${messageText || ''}</div>
+                <input type="text" class="cpj-dark-prompt-input" id="cpj-prompt-input" autocomplete="off" />
+                <div class="cpj-dark-prompt-actions">
+                    <button type="button" class="cpj-dark-btn-ok" id="cpj-prompt-ok">${okText}</button>
+                    <button type="button" class="cpj-dark-btn-cancel" id="cpj-prompt-cancel">${cancelText}</button>
+                </div>
+            `;
+
+            overlay.appendChild(card);
+            document.body.appendChild(overlay);
+
+            const input = card.querySelector('#cpj-prompt-input');
+            const okBtn = card.querySelector('#cpj-prompt-ok');
+            const cancelBtn = card.querySelector('#cpj-prompt-cancel');
+
+            input.value = defaultVal || '';
+
+            function cleanup(result) {
+                window.removeEventListener('keydown', onKey, true);
+                if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                resolve(result);
+            }
+
+            function onKey(e) {
+                e.stopPropagation();
+                if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    cleanup(input.value);
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cleanup(null);
+                }
+            }
+
+            ['keydown', 'keyup', 'keypress'].forEach(type => {
+                card.addEventListener(type, (e) => {
+                    e.stopPropagation();
+                    if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+                }, true);
+            });
+
+            okBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                cleanup(input.value);
+            });
+
+            cancelBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                cleanup(null);
+            });
+
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) cleanup(null);
+            });
+
+            card.addEventListener('click', (e) => e.stopPropagation());
+
+            window.addEventListener('keydown', onKey, true);
+
+            setTimeout(() => {
+                input.focus();
+                input.select();
+            }, 30);
+        });
+    }
+
+    // Phrases Studio CRUD (Criação Direta pelo Input Inline + Telinha Preta Restrita à Edição)
     const studioInp = document.getElementById('cpj-studio-inp');
     const studioAddBtn = document.getElementById('cpj-studio-add');
+    let studioMsgTimer = null;
+
+    function showStudioMessage(text, type = 'error') {
+        const msgEl = document.getElementById('cpj-studio-msg');
+        if (!msgEl) return;
+        if (studioMsgTimer) {
+            clearTimeout(studioMsgTimer);
+            studioMsgTimer = null;
+        }
+        const iconSvg = type === 'success'
+            ? `<div class="cpj-studio-msg-icon"><svg viewBox="0 0 24 24" width="12" height="12" fill="#ffffff"><path d="M2 20h2c.55 0 1-.45 1-1v-9c0-.55-.45-1-1-1H2v11zm19.83-7.12c.11-.25.17-.52.17-.88 0-1.1-.9-2-2-2h-5.5l.92-4.65c.05-.22.02-.46-.08-.66-.23-.45-.52-.86-.88-1.22L14 3 7.59 9.41C7.21 9.79 7 10.3 7 10.83V19c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-.12z"/></svg></div>`
+            : `<div class="cpj-studio-msg-icon"><svg viewBox="0 0 24 24" width="12" height="12" fill="#ffffff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div>`;
+        msgEl.className = `cpj-studio-msg ${type}`;
+        msgEl.innerHTML = `${iconSvg}<span class="cpj-studio-msg-text">${text}</span>`;
+        studioMsgTimer = setTimeout(() => {
+            msgEl.className = 'cpj-studio-msg hidden';
+            msgEl.innerHTML = '';
+            studioMsgTimer = null;
+        }, 10000);
+    }
 
     function handleAddPhrase() {
-        let val = studioInp ? studioInp.value.trim() : '';
+        if (!studioInp) return;
+        const val = studioInp.value.trim();
         const t = I18N[state.lang] || I18N.en;
         if (state.phrases.length >= 6) {
-            alert(t.studioMaxAlert);
+            showStudioMessage(t.studioMaxAlert, 'error');
             return;
         }
         if (!val) {
-            const promptVal = prompt(t.studioPlaceholder || (state.lang === 'pt' ? 'Digite a nova frase de likes:' : 'Type new like phrase:'));
-            if (promptVal && promptVal.trim().length >= 2) {
-                val = promptVal.trim();
-            } else {
-                if (studioInp) studioInp.focus();
-                return;
-            }
+            showStudioMessage(t.studioEmptyAlert, 'error');
+            studioInp.focus();
+            return;
         }
         if (val.length >= 2) {
             state.phrases.push({ text: val, enabled: true });
             state.saveShared();
-            if (studioInp) studioInp.value = '';
+            studioInp.value = '';
             renderStudioList();
             updateNextMsgPreview();
+            showStudioMessage(t.studioSuccessAlert, 'success');
         }
+        studioInp.focus();
     }
 
-    studioAddBtn.addEventListener('click', handleAddPhrase);
-    if (studioInp) {
-        studioInp.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleAddPhrase();
-            }
+    if (studioAddBtn) {
+        studioAddBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleAddPhrase();
         });
     }
 
-    document.getElementById('cpj-phrase-list').addEventListener('click', (e) => {
+    if (studioInp) {
+        ['keydown', 'keyup', 'keypress'].forEach(evt => {
+            studioInp.addEventListener(evt, (e) => {
+                e.stopPropagation();
+                if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+                if (evt === 'keydown' && e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddPhrase();
+                }
+            }, true);
+        });
+    }
+
+    document.getElementById('cpj-phrase-list').addEventListener('click', async (e) => {
         const eyeBtn = e.target.closest('.cpj-btn-mini.eye');
         const delBtn = e.target.closest('.cpj-btn-mini.del');
         const editBtn = e.target.closest('.cpj-btn-mini.edit');
@@ -1771,7 +2350,8 @@
             const idx = Number(editBtn.getAttribute('data-idx'));
             if (!isNaN(idx) && idx >= 0 && idx < state.phrases.length) {
                 const current = state.phrases[idx].text;
-                const updated = prompt(t.editPrompt, current);
+                const editTitle = state.lang === 'pt' ? 'Editar frase:' : 'Edit phrase:';
+                const updated = await showDarkPrompt(editTitle, current);
                 if (updated && updated.trim().length > 1) {
                     state.phrases[idx].text = updated.trim();
                     state.saveShared();
@@ -1818,13 +2398,20 @@
         modal.style.setProperty('--cpj-scale', scale.toFixed(3));
     }
 
+    const dragHeader = document.getElementById('cpj-drag');
+    dragHeader.addEventListener('dragstart', (e) => e.preventDefault());
+    modal.addEventListener('dragstart', (e) => e.preventDefault());
+
     // Início de arraste (Header)
-    document.getElementById('cpj-drag').addEventListener('mousedown', (e) => {
+    dragHeader.addEventListener('mousedown', (e) => {
         if (e.target.closest('.cpj-cbtn')) return;
         isDragging = true;
         startMouseX = e.clientX;
         startMouseY = e.clientY;
         startRect = modal.getBoundingClientRect();
+        // Fix anti-teleport: sincroniza left e top inline antes de zerar right/bottom
+        modal.style.left = `${startRect.left}px`;
+        modal.style.top = `${startRect.top}px`;
         modal.style.right = 'auto';
         modal.style.bottom = 'auto';
         e.preventDefault();
@@ -1840,6 +2427,8 @@
             startMouseX = e.clientX;
             startMouseY = e.clientY;
             startRect = modal.getBoundingClientRect();
+            modal.style.left = `${startRect.left}px`;
+            modal.style.top = `${startRect.top}px`;
             modal.style.right = 'auto';
             modal.style.bottom = 'auto';
         });
@@ -1848,6 +2437,7 @@
     // Movimentação global (MouseMove em fase de captura para suavidade total)
     window.addEventListener('mousemove', (e) => {
         if (isDragging && startRect) {
+            if (e.clientX <= 0 || e.clientY <= 0) return;
             e.preventDefault();
             e.stopPropagation();
             const dx = e.clientX - startMouseX;
@@ -1917,26 +2507,50 @@
         }
     }, true);
 
-    // Bloqueia eventos de clique/mouse para não vazarem para o canvas do jogo (impedindo o pinguim de andar)
+    // Bloqueia eventos de clique/mouse e digitação de teclado para não vazarem para o canvas do jogo
     function isolateFromGame(element) {
         if (!element) return;
-        const events = [
+        const pointerEvents = [
             'mousedown', 'mouseup', 'click', 'dblclick',
             'pointerdown', 'pointerup', 'pointercancel',
             'touchstart', 'touchend', 'contextmenu'
         ];
-        events.forEach(evt => {
+        pointerEvents.forEach(evt => {
             element.addEventListener(evt, (e) => {
                 e.stopPropagation();
             }, false);
+        });
+
+        // Soberania do teclado: impede que digitar no card faça o pinguim dançar, acenar ou mandar emotes
+        ['keydown', 'keyup', 'keypress'].forEach(evt => {
+            element.addEventListener(evt, (e) => {
+                if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable)) {
+                    e.stopPropagation();
+                    if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+                }
+            }, true);
         });
     }
     isolateFromGame(modal);
     isolateFromGame(launcher);
 
+    // Interceptor global em fase de captura para blindagem total dos inputs
+    ['keydown', 'keyup', 'keypress'].forEach(type => {
+        window.addEventListener(type, (e) => {
+            if (e.target && e.target.closest && e.target.closest('#cpj-modal, .cpj-dark-prompt-overlay')) {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.closest('.cpj-dark-prompt-card')) {
+                    e.stopPropagation();
+                    if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+                }
+            }
+        }, true);
+    });
+
     // Atalho F9
     window.addEventListener('keydown', (e) => {
-        if (e.key === 'F9') modal.classList.toggle('cpj-closed');
+        if (e.key === 'F9' && !e.target.closest('input, textarea, .cpj-dark-prompt-overlay')) {
+            modal.classList.toggle('cpj-closed');
+        }
     });
 
     updateLanguageUI();

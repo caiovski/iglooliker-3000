@@ -644,54 +644,127 @@
     font-size: 12px !important;
     font-weight: 900 !important;
 }
+.cpj-slider-track-wrap {
+    position: relative !important;
+    width: 100% !important;
+    height: 30px !important;
+    display: flex !important;
+    align-items: center !important;
+    margin: 4px 0 !important;
+    user-select: none !important;
+    box-sizing: border-box !important;
+}
+.cpj-slider-visual-track {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    height: 16px !important;
+    background: #ffffff !important;
+    border: 2px solid #00284d !important;
+    border-radius: 8px !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4) !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    box-sizing: border-box !important;
+    z-index: 1 !important;
+}
+.cpj-slider-visual-fill {
+    height: 100% !important;
+    background: #ff8800 !important;
+    border-radius: 6px 0 0 6px !important;
+    pointer-events: none !important;
+}
+.cpj-slider-visual-thumb {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 28px !important;
+    height: 28px !important;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M 3.5 14.5 C 3.2 18.2 5.2 23 9.5 24.5 C 14.2 25.8 20.5 24.8 23.5 21 C 25.5 18.5 25.8 13.8 24.2 10.5 C 22.8 7.5 19.5 4.2 15.5 3.5 C 11.2 2.8 6.2 6.2 4.2 10.5 C 3.5 11.8 3.6 13.2 3.5 14.5 Z' fill='%23526377' stroke='%2300284d' stroke-width='2.6' stroke-linejoin='round'/%3E%3Cpath d='M 5.2 13 C 5 9.5 7.5 5.5 12.2 4.5 C 16.5 3.5 21.2 6 23 10 C 24.2 13 23.8 17 21 19.2 C 18 21.5 13.2 22 9.5 19.8 C 7 18 5.4 15.5 5.2 13 Z' fill='%23ffffff'/%3E%3C/svg%3E") center / contain no-repeat !important;
+    filter: drop-shadow(0 2.5px 7px rgba(0, 0, 0, 0.7)) !important;
+    border: none !important;
+    box-shadow: none !important;
+    pointer-events: none !important;
+    box-sizing: border-box !important;
+    z-index: 2 !important;
+    transition: transform 0.15s ease !important;
+}
+.cpj-slider-track-wrap:hover .cpj-slider-visual-thumb {
+    transform: translate(-50%, -50%) scale(1.15) !important;
+}
 .cpj-snow-slider {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0 !important;
+    cursor: pointer !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 3 !important;
     -webkit-appearance: none !important;
     -moz-appearance: none !important;
     appearance: none !important;
-    display: block !important;
-    width: 100% !important;
-    height: 12px !important;
-    background: #ffffff !important;
-    border-radius: 6px !important;
-    outline: none !important;
-    border: 2px solid #00284d !important;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4) !important;
-    cursor: pointer !important;
-    margin: 8px 0 !important;
-    padding: 0 !important;
-}
-.cpj-snow-slider::-moz-range-track {
-    background: transparent !important;
-    border: none !important;
-    height: 12px !important;
-}
-.cpj-snow-slider::-moz-range-progress {
-    background: transparent !important;
-}
-.cpj-snow-slider::-webkit-slider-thumb {
-    -webkit-appearance: none !important;
-    appearance: none !important;
-    width: 22px !important;
-    height: 22px !important;
-    border-radius: 50% !important;
-    background: #ffffff !important;
-    border: 2.5px solid var(--cp-border-cyan) !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5) !important;
-    cursor: pointer !important;
-    transition: transform 0.1s ease !important;
-}
-.cpj-snow-slider::-webkit-slider-thumb:hover { transform: scale(1.15) !important; }
-.cpj-snow-slider::-moz-range-thumb {
-    width: 22px !important;
-    height: 22px !important;
-    border-radius: 50% !important;
-    background: #ffffff !important;
-    border: 2.5px solid var(--cp-border-cyan) !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5) !important;
-    cursor: pointer !important;
 }
 
-/* Phrases Studio CRUD */
+/* Phrases Studio CRUD & Feedback Banners */
+.cpj-studio-msg {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    border-radius: 8px !important;
+    padding: 7px 10px !important;
+    margin-bottom: 8px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1.35 !important;
+    box-sizing: border-box !important;
+    animation: cpjMsgIn 0.2s ease-out !important;
+}
+@keyframes cpjMsgIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.cpj-studio-msg.hidden {
+    display: none !important;
+}
+.cpj-studio-msg.error {
+    background: #52161b !important;
+    border: 1.5px solid #ff4d6d !important;
+    color: #ffccd5 !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+}
+.cpj-studio-msg.success {
+    background: #16532d !important;
+    border: 1.5px solid #22c55e !important;
+    color: #bbf7d0 !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+}
+.cpj-studio-msg-icon {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+}
+.cpj-studio-msg.error .cpj-studio-msg-icon {
+    background: #ff4d6d !important;
+}
+.cpj-studio-msg.success .cpj-studio-msg-icon {
+    background: #22c55e !important;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.6) !important;
+}
+.cpj-studio-msg-icon svg {
+    display: block !important;
+}
+.cpj-studio-msg-text {
+    flex: 1 !important;
+}
 .cpj-studio-input-wrap {
     display: flex !important;
     gap: 6px !important;
@@ -797,4 +870,114 @@
     background: #c0392b !important;
 }
 .cpj-btn-mini:hover { transform: scale(1.1) !important; }
+
+/* Modal Escuro de Prompt In-DOM ("Telinha Preta" não-bloqueante) */
+.cpj-dark-prompt-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.65) !important;
+    backdrop-filter: blur(2px) !important;
+    z-index: 2147483647 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    user-select: none !important;
+    isolation: isolate !important;
+}
+.cpj-dark-prompt-card {
+    background: #1c1b22 !important;
+    border: 1px solid #2f303d !important;
+    border-radius: 16px !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85) !important;
+    padding: 20px 22px !important;
+    width: 360px !important;
+    max-width: 90vw !important;
+    box-sizing: border-box !important;
+    font-family: var(--cp-font, 'Fredoka', sans-serif) !important;
+    animation: cpjPromptIn 0.15s ease-out !important;
+}
+@keyframes cpjPromptIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+.cpj-dark-prompt-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-bottom: 14px !important;
+}
+.cpj-dark-prompt-header svg {
+    flex-shrink: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+}
+.cpj-dark-prompt-domain {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    letter-spacing: -0.2px !important;
+}
+.cpj-dark-prompt-label {
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    color: #f1f5f9 !important;
+    margin-bottom: 12px !important;
+    word-break: break-word !important;
+}
+.cpj-dark-prompt-input {
+    width: 100% !important;
+    background: #101014 !important;
+    border: 2px solid #00cbf7 !important;
+    border-radius: 12px !important;
+    padding: 9px 14px !important;
+    font-size: 13.5px !important;
+    color: #ffffff !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    box-shadow: 0 0 0 1px rgba(0, 203, 247, 0.3) !important;
+    margin-bottom: 18px !important;
+    font-family: inherit !important;
+}
+.cpj-dark-prompt-input:focus {
+    border-color: #00e5ff !important;
+    box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.35) !important;
+}
+.cpj-dark-prompt-actions {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+}
+.cpj-dark-btn-ok {
+    background: #00cbf7 !important;
+    color: #00223a !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    border: none !important;
+    border-radius: 9px !important;
+    padding: 8px 20px !important;
+    cursor: pointer !important;
+    font-family: inherit !important;
+    transition: background 0.15s ease, transform 0.1s ease !important;
+}
+.cpj-dark-btn-ok:hover { background: #38d8fc !important; }
+.cpj-dark-btn-ok:active { transform: scale(0.97) !important; }
+.cpj-dark-btn-cancel {
+    background: #2b2b36 !important;
+    color: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    border: none !important;
+    border-radius: 9px !important;
+    padding: 8px 18px !important;
+    cursor: pointer !important;
+    font-family: inherit !important;
+    transition: background 0.15s ease, transform 0.1s ease !important;
+}
+.cpj-dark-btn-cancel:hover { background: #3a3a49 !important; }
+.cpj-dark-btn-cancel:active { transform: scale(0.97) !important; }
 

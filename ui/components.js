@@ -27,17 +27,10 @@ class BoosterUI {
                     <div><span class="cpj-status-dot active"></span><span>IglooLiker 3000</span></div>
                     <div><span class="cpj-status-dot" id="cpj-dot-status"></span><span id="cpj-text-status">Ready</span></div>
                 </div>
-                <div class="cpj-lang-wrap">
-                    <button class="cpj-lang-btn" id="cpj-btn-lang"><span id="cpj-txt-lang">Language: English (USA)</span><svg viewBox="0 0 24 24" width="14" height="14"><path d="M7 10l5 5 5-5z" fill="#00e5ff"/></svg></button>
-                    <div class="cpj-lang-menu" id="cpj-menu-lang"><div class="cpj-lang-item" data-lang="en"><span>English (USA)</span><span>EN</span></div><div class="cpj-lang-item" data-lang="pt"><span>Português (Brasil)</span><span>PT-BR</span></div></div>
-                </div>
+                <div class="cpj-lang-wrap"><button class="cpj-lang-btn" id="cpj-btn-lang"><span id="cpj-txt-lang">Language: English (USA)</span><svg viewBox="0 0 24 24" width="14" height="14"><path d="M7 10l5 5 5-5z" fill="#00e5ff"/></svg></button><div class="cpj-lang-menu" id="cpj-menu-lang"><div class="cpj-lang-item" data-lang="en"><span>English (USA)</span><span>EN</span></div><div class="cpj-lang-item" data-lang="pt"><span>Português (Brasil)</span><span>PT-BR</span></div></div></div>
                 <div class="cpj-likes-card">
                     <div class="cpj-likes-header"><span id="cpj-lbl-prog">${ic.igloo || ''} Igloo Likes Progression</span><span class="cpj-percent-badge" id="cpj-badge-percent">00.00%</span></div>
-                    <div class="cpj-numbers-row">
-                        <div class="cpj-number-box"><span class="cpj-number-tag" id="cpj-tag-likes">Current Likes</span><input type="text" inputmode="numeric" id="cpj-input-likes" class="cpj-input-likes-pill" value="${this.state.get('currentLikes')}"></div>
-                        <span style="font-size:20px;color:#00e5ff;font-weight:700;margin-top:14px;">/</span>
-                        <div class="cpj-number-box"><span class="cpj-number-tag" id="cpj-tag-goal">Target Goal</span><input type="text" inputmode="numeric" id="cpj-input-goal" class="cpj-input-goal-pill" value="${this.state.get('targetGoal')}"></div>
-                    </div>
+                    <div class="cpj-numbers-row"><div class="cpj-number-box"><span class="cpj-number-tag" id="cpj-tag-likes">Current Likes</span><input type="text" inputmode="numeric" id="cpj-input-likes" class="cpj-input-likes-pill" value="${this.state.get('currentLikes')}"></div><span style="font-size:20px;color:#00e5ff;font-weight:700;margin-top:14px;">/</span><div class="cpj-number-box"><span class="cpj-number-tag" id="cpj-tag-goal">Target Goal</span><input type="text" inputmode="numeric" id="cpj-input-goal" class="cpj-input-goal-pill" value="${this.state.get('targetGoal')}"></div></div>
                     <div class="cpj-goal-error-banner" id="cpj-err-box"></div>
                     <div class="cpj-progress-track"><div class="cpj-progress-fill" id="cpj-prog-fill" style="width:0%;"></div></div>
                     <div class="cpj-ratio-footer"><span id="cpj-lbl-lcount">0 likes</span><span id="cpj-lbl-gcount">Goal: 1000</span></div>
@@ -47,10 +40,7 @@ class BoosterUI {
                     <div class="cpj-checkbox-row ${this.state.get('rotatePhrases') ? 'checked' : ''}" id="cpj-row-rotate"><div class="cpj-checkbox-box">${ic.check || ''}</div><span id="cpj-lbl-rotate">Rotate like phrases</span></div>
                     <div class="cpj-checkbox-row ${this.state.get('randomDelay') ? 'checked' : ''}" id="cpj-row-jitter"><div class="cpj-checkbox-box">${ic.check || ''}</div><span id="cpj-lbl-jitter">Random anti-spam (9s to 11s)</span></div>
                     <div class="cpj-checkbox-row ${this.state.get('deactivatePhrases') ? 'checked' : ''}" id="cpj-row-deact"><div class="cpj-checkbox-box">${ic.check || ''}</div><span id="cpj-lbl-deact">Deactivate phrases (Silent mode)</span></div>
-                    <div style="background:#003b70;border:1.5px solid #00e5ff;border-radius:10px;padding:8px;margin-top:6px;font-size:12px;">
-                        <div style="font-size:10px;color:#8edeff;font-weight:700;text-transform:uppercase;" id="cpj-lbl-next">Next Message:</div>
-                        <div id="cpj-txt-next" style="word-break:break-word;">""</div>
-                    </div>
+                    <div style="background:#003b70;border:1.5px solid #00e5ff;border-radius:10px;padding:8px;margin-top:6px;font-size:12px;"><div style="font-size:10px;color:#8edeff;font-weight:700;text-transform:uppercase;" id="cpj-lbl-next">Next Message:</div><div id="cpj-txt-next" style="word-break:break-word;">""</div></div>
                 </div>
                 <div class="cpj-tab-panel" id="cpj-pnl-actions">
                     <div class="cpj-checkbox-row ${this.state.get('autoDance') ? 'checked' : ''}" id="cpj-row-dance"><div class="cpj-checkbox-box">${ic.check || ''}</div><span id="cpj-lbl-dance">Auto-Dance ('D')</span></div>
@@ -58,11 +48,12 @@ class BoosterUI {
                     <div class="cpj-checkbox-row ${this.state.get('repeatAction') ? 'checked' : ''}" id="cpj-row-repeat"><div class="cpj-checkbox-box">${ic.check || ''}</div><span id="cpj-lbl-repeat">Repeat action continuously</span></div>
                     <div class="cpj-slider-container ${this.state.get('repeatAction') ? '' : 'hidden'}" id="cpj-slider-box">
                         <div class="cpj-slider-header"><span id="cpj-lbl-slider">Action Interval:</span><span class="cpj-slider-pill" id="cpj-val-slider">${this.state.get('actionInterval')}s</span></div>
-                        <input type="range" min="5" max="10" step="1" value="${this.state.get('actionInterval')}" class="cpj-snow-slider" id="cpj-slider-act">
+                        <div class="cpj-slider-track-wrap" id="cpj-track-wrap-act" style="position:relative!important;width:100%!important;height:30px!important;display:flex!important;align-items:center!important;margin:4px 0!important;user-select:none!important;box-sizing:border-box!important;cursor:pointer!important;"><div class="cpj-slider-visual-track" style="position:absolute!important;left:0!important;right:0!important;top:50%!important;transform:translateY(-50%)!important;height:16px!important;background:#ffffff!important;border:2px solid #00284d!important;border-radius:8px!important;box-shadow:inset 0 2px 4px rgba(0,0,0,0.4)!important;overflow:hidden!important;pointer-events:none!important;box-sizing:border-box!important;z-index:1!important;"><div class="cpj-slider-visual-fill" id="cpj-visual-fill" style="height:100%!important;width:calc(14px + (100% - 28px) * ${(this.state.get('actionInterval') - 5) / 5});background:#ff8800!important;border-radius:6px 0 0 6px!important;pointer-events:none!important;"></div></div><div class="cpj-slider-visual-thumb" id="cpj-visual-thumb" style="position:absolute!important;top:50%!important;left:calc(14px + (100% - 28px) * ${(this.state.get('actionInterval') - 5) / 5});transform:translate(-50%,-50%)!important;pointer-events:none!important;z-index:2!important;cursor:pointer!important;"></div><input type="range" min="5" max="10" step="1" value="${this.state.get('actionInterval')}" class="cpj-snow-slider" id="cpj-slider-act" style="position:absolute!important;left:0!important;top:0!important;width:100%!important;height:100%!important;opacity:0!important;pointer-events:none!important;margin:0!important;padding:0!important;z-index:3!important;-webkit-appearance:none!important;-moz-appearance:none!important;appearance:none!important;"></div>
                         <div style="display:flex;justify-content:space-between;font-size:10px;color:#8edeff;font-weight:700;margin-top:4px;"><span>5s</span><span>10s</span></div>
                     </div>
                 </div>
                 <div class="cpj-tab-panel" id="cpj-pnl-studio">
+                    <div class="cpj-studio-msg hidden" id="cpj-msg-studio"></div>
                     <div class="cpj-studio-input-wrap"><input type="text" class="cpj-studio-input" id="cpj-inp-studio" placeholder="Type new phrase..." maxlength="100"><button class="cpj-btn-add" id="cpj-btn-add">+ ADD</button></div>
                     <div class="cpj-phrase-list" id="cpj-list-phrases"></div>
                     <div style="font-size:11px;color:#8edeff;font-weight:700;text-align:right;" id="cpj-cap-studio">Slots: 4/6</div>
@@ -79,28 +70,21 @@ class BoosterUI {
     renderLauncher(ic) {
         if (document.getElementById('cpj-floating-launcher-btn')) return;
         const btn = document.createElement('div');
-        btn.id = 'cpj-floating-launcher-btn';
-        btn.className = 'cpj-floating-launcher';
-        btn.title = 'IglooLiker 3000 (F9)';
-        btn.innerHTML = ic.igloo || '';
-        btn.onclick = () => this.modalEl?.classList.toggle('cpj-closed');
+        btn.id = 'cpj-floating-launcher-btn'; btn.className = 'cpj-floating-launcher'; btn.title = 'IglooLiker 3000 (F9)';
+        btn.innerHTML = ic.igloo || ''; btn.onclick = () => this.modalEl?.classList.toggle('cpj-closed');
         document.body.appendChild(btn);
     }
 
     bindEvents(ic) {
         const m = this.modalEl, l = document.getElementById('cpj-floating-launcher-btn');
         ['mousedown', 'mouseup', 'click', 'dblclick', 'pointerdown', 'pointerup', 'pointercancel', 'touchstart', 'touchend', 'contextmenu'].forEach(evt => {
-            m.addEventListener(evt, e => e.stopPropagation(), false);
-            l?.addEventListener(evt, e => e.stopPropagation(), false);
+            m.addEventListener(evt, e => e.stopPropagation(), false); l?.addEventListener(evt, e => e.stopPropagation(), false);
         });
-
         m.querySelector('#cpj-btn-close').onclick = () => m.classList.add('cpj-closed');
         let min = false;
         m.querySelector('#cpj-btn-min').onclick = () => {
-            min = !min; m.classList.toggle('minimized', min);
-            m.querySelector('#cpj-btn-min').innerHTML = min ? (ic.maximize || '') : (ic.minimize || '');
+            min = !min; m.classList.toggle('minimized', min); m.querySelector('#cpj-btn-min').innerHTML = min ? (ic.maximize || '') : (ic.minimize || '');
         };
-
         const h = m.querySelector('#cpj-header-drag');
         let rDir = null, smX = 0, smY = 0, sRect = null;
         const setScale = (w, h) => m.style.setProperty('--cpj-scale', Math.max(0.75, Math.min(1.4, (w / 380) * 0.6 + (h / 500) * 0.4)).toFixed(3));
@@ -114,8 +98,7 @@ class BoosterUI {
         m.querySelectorAll('.cpj-resizer').forEach(el => {
             el.onmousedown = (e) => {
                 e.preventDefault(); e.stopPropagation(); rDir = el.getAttribute('data-dir');
-                smX = e.clientX; smY = e.clientY; sRect = m.getBoundingClientRect();
-                m.style.right = 'auto'; m.style.bottom = 'auto';
+                smX = e.clientX; smY = e.clientY; sRect = m.getBoundingClientRect(); m.style.right = m.style.bottom = 'auto';
             };
         });
 
@@ -165,16 +148,38 @@ class BoosterUI {
 
         m.querySelector('#cpj-input-likes').oninput = (e) => this.state.updateLikes(parseInt(e.target.value.replace(/\D/g, ''), 10) || 0);
         m.querySelector('#cpj-input-goal').oninput = (e) => this.state.updateGoal(parseInt(e.target.value.replace(/\D/g, ''), 10) || 0);
+        [['#cpj-row-rotate', 'rotatePhrases'], ['#cpj-row-jitter', 'randomDelay'], ['#cpj-row-deact', 'deactivatePhrases'], ['#cpj-row-dance', 'autoDance'], ['#cpj-row-wave', 'autoWave'], ['#cpj-row-repeat', 'repeatAction']].forEach(([id, k]) => { m.querySelector(id).onclick = () => { this.state.set(k, !this.state.get(k)); this.updateAll(); }; });
 
-        const bindCheck = (id, key) => { m.querySelector(id).onclick = () => { this.state.set(key, !this.state.get(key)); this.updateAll(); }; };
-        [['#cpj-row-rotate', 'rotatePhrases'], ['#cpj-row-jitter', 'randomDelay'], ['#cpj-row-deact', 'deactivatePhrases'], ['#cpj-row-dance', 'autoDance'], ['#cpj-row-wave', 'autoWave'], ['#cpj-row-repeat', 'repeatAction']].forEach(([id, k]) => bindCheck(id, k));
+        const tw = m.querySelector('#cpj-track-wrap-act'), sl = m.querySelector('#cpj-slider-act');
+        const setPos = (cx, isDrag) => {
+            const r = tw?.getBoundingClientRect(); if (!r || r.width <= 0) return;
+            const ratio = Math.max(0, Math.min(1, (cx - r.left) / r.width)), nv = Math.max(5, Math.min(10, Math.round(5 + ratio * 5)));
+            const f = m.querySelector('#cpj-visual-fill'), th = m.querySelector('#cpj-visual-thumb'), ur = isDrag ? ratio : (nv - 5) / 5, pc = `calc(14px + (100% - 28px) * ${ur})`;
+            if (f) f.style.setProperty('width', pc, 'important'); if (th) th.style.setProperty('left', pc, 'important');
+            m.querySelector('#cpj-val-slider').textContent = `${nv}s`;
+            this.state.set('actionInterval', nv); if (sl) sl.value = nv;
+            if (!isDrag && this.state.get('isRunning') && this.state.get('repeatAction')) this.engine.startActionLoop();
+        };
+        let dragSl = false;
+        const onMove = (e) => { if (dragSl) { setPos(e.clientX, true); e.preventDefault(); } };
+        const onUp = (e) => { if (dragSl) { dragSl = false; window.removeEventListener('pointermove', onMove, true); window.removeEventListener('pointerup', onUp, true); setPos(e.clientX, false); } };
+        if (tw) { tw.onpointerdown = (e) => { dragSl = true; window.addEventListener('pointermove', onMove, true); window.addEventListener('pointerup', onUp, true); setPos(e.clientX, true); e.preventDefault(); e.stopPropagation(); }; }
+        if (sl) sl.oninput = sl.onchange = (e) => { this.state.set('actionInterval', Number(e.target.value) || 7); this.updateSlider(); if (this.state.get('isRunning') && this.state.get('repeatAction')) this.engine.startActionLoop(); };
 
-        m.querySelector('#cpj-slider-act').oninput = (e) => { this.state.set('actionInterval', Number(e.target.value) || 7); this.updateSlider(); };
+        let msgT = null;
+        const showMsg = (txt, type) => {
+            const el = m.querySelector('#cpj-msg-studio'); if (!el) return;
+            if (msgT) clearTimeout(msgT);
+            const icSvg = type === 'success' ? `<div class="cpj-studio-msg-icon"><svg viewBox="0 0 24 24" width="11" height="11" fill="#fff"><path d="M2 20h2c.55 0 1-.45 1-1v-9c0-.55-.45-1-1-1H2v11zm19.83-7.12c.11-.25.17-.52.17-.88 0-1.1-.9-2-2-2h-5.5l.92-4.65c.05-.22.02-.46-.08-.66-.23-.45-.52-.86-.88-1.22L14 3 7.59 9.41C7.21 9.79 7 10.3 7 10.83V19c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-.12z"/></svg></div>` : `<div class="cpj-studio-msg-icon"><svg viewBox="0 0 24 24" width="11" height="11" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div>`;
+            el.className = `cpj-studio-msg ${type}`; el.innerHTML = `${icSvg}<span class="cpj-studio-msg-text">${txt}</span>`;
+            msgT = setTimeout(() => { el.className = 'cpj-studio-msg hidden'; el.innerHTML = ''; msgT = null; }, 10000);
+        };
         const doAdd = () => {
-            const inp = m.querySelector('#cpj-inp-studio');
-            let val = (inp.value || '').trim();
-            if (!val) val = (prompt(this.state.get('lang') === 'pt' ? 'Digite a frase:' : 'Type phrase:') || '').trim();
-            if (val && this.state.addPhrase(val)) { inp.value = ''; this.updateStudio(); }
+            const inp = m.querySelector('#cpj-inp-studio'); let val = (inp.value || '').trim();
+            const ph = this.state.get('phrases') || [], isPt = this.state.get('lang') === 'pt';
+            if (ph.length >= 6) { showMsg(isPt ? 'Não é possível adicionar novas frases pois atingiu a capacidade máxima.' : 'Cannot add new phrases because maximum capacity is reached.', 'error'); return; }
+            if (!val) { showMsg(isPt ? 'Escreva algo no campo para inserir uma nova frase!' : 'Write something in the field to add a new phrase!', 'error'); inp.focus(); return; }
+            if (val && this.state.addPhrase(val)) { inp.value = ''; this.updateStudio(); showMsg(isPt ? 'Frase adicionada com sucesso!' : 'Phrase added successfully!', 'success'); }
             inp.focus();
         };
         m.querySelector('#cpj-btn-add').onclick = doAdd;
@@ -190,17 +195,15 @@ class BoosterUI {
                 if (up) { this.state.editPhrase(idx, up); this.updateStudio(); }
             }
         };
-        m.querySelector('#cpj-btn-power').onclick = () => {
-            if (this.state.get('isRunning')) this.engine.stop(); else this.engine.start();
-            this.updateAll();
-        };
+        m.querySelector('#cpj-btn-power').onclick = () => { if (this.state.get('isRunning')) this.engine.stop(); else this.engine.start(); this.updateAll(); };
         window.addEventListener('keydown', (e) => { if (e.key === 'F9') m.classList.toggle('cpj-closed'); });
         ['currentLikes', 'targetGoal', 'goalError'].forEach(k => this.state.subscribe(k, () => this.updateAll()));
     }
 
     updateSlider() {
-        const s = this.modalEl.querySelector('#cpj-slider-act'), v = Number(s.value) || 7, pct = Math.max(0, Math.min(100, ((v - 5) / 5) * 100));
-        s.style.setProperty('background', `linear-gradient(to right, #ff8800 0%, #ff8800 ${pct}%, #ffffff ${pct}%, #ffffff 100%)`, 'important');
+        const s = this.modalEl.querySelector('#cpj-slider-act'), v = Number(s.value) || 7, pct = Math.max(0, Math.min(100, ((v - 5) / 5) * 100)), fac = pct / 100;
+        const f = this.modalEl.querySelector('#cpj-visual-fill'), th = this.modalEl.querySelector('#cpj-visual-thumb'), pc = `calc(14px + (100% - 28px) * ${fac})`;
+        if (f) f.style.setProperty('width', pc, 'important'); if (th) th.style.setProperty('left', pc, 'important');
         this.modalEl.querySelector('#cpj-val-slider').textContent = `${v}s`;
     }
 
@@ -242,5 +245,4 @@ class BoosterUI {
         this.updateSlider(); this.updateStudio();
     }
 }
-
 if (typeof module !== 'undefined' && module.exports) module.exports = { BoosterUI }; else window.BoosterUI = BoosterUI;

@@ -5,66 +5,28 @@
 
 const CPJ_I18N = {
     en: {
-        title: "IglooLiker 3000",
-        statusActive: "Active & Dancing",
-        statusPaused: "Ready (Paused)",
-        statusSilent: "Silent Monitoring",
-        allRooms: "All Rooms",
-        langLabel: "Language: English (USA)",
-        iglooProgress: "Igloo Likes Progression",
-        detectedLikes: "Current Likes",
-        targetGoal: "Target Goal",
-        likesUnit: "likes",
-        goalUnit: "Goal:",
-        tabPhrases: "Phrases",
-        tabActions: "Actions",
-        tabStudio: "Studio",
-        rotatePhrases: "Rotate like phrases",
-        randomDelay: "Random anti-spam (9s to 11s)",
-        deactivatePhrases: "Deactivate phrases (Silent mode)",
-        autoDance: "Auto-Dance ('D' keypress)",
-        autoWave: "Auto-Wave ('W' keypress)",
-        repeatAction: "Repeat action continuously",
-        actionInterval: "Action Interval:",
-        nextMsgTitle: "Next Message (Likes):",
-        startBot: "START BOT",
-        stopBot: "PAUSE BOT",
-        studioPlaceholder: "Type new like phrase...",
-        studioAdd: "+ ADD",
-        studioCap: "Slot: ",
-        studioMaxAlert: "Maximum 6 phrases reached!",
-        editPrompt: "Edit phrase:"
+        title: "IglooLiker 3000", statusActive: "Active & Dancing", statusPaused: "Ready (Paused)",
+        statusSilent: "Silent Monitoring", allRooms: "All Rooms", langLabel: "Language: English (USA)",
+        iglooProgress: "Igloo Likes Progression", detectedLikes: "Current Likes", targetGoal: "Target Goal",
+        likesUnit: "likes", goalUnit: "Goal:", tabPhrases: "Phrases", tabActions: "Actions", tabStudio: "Studio",
+        rotatePhrases: "Rotate like phrases", randomDelay: "Random anti-spam (9s to 11s)",
+        deactivatePhrases: "Deactivate phrases (Silent mode)", autoDance: "Auto-Dance ('D' keypress)",
+        autoWave: "Auto-Wave ('W' keypress)", repeatAction: "Repeat action continuously",
+        actionInterval: "Action Interval:", nextMsgTitle: "Next Message (Likes):",
+        startBot: "START BOT", stopBot: "PAUSE BOT", studioPlaceholder: "Type new like phrase...",
+        studioAdd: "+ ADD", studioCap: "Slot: ", studioMaxAlert: "Maximum 6 phrases reached!", editPrompt: "Edit phrase:"
     },
     pt: {
-        title: "IglooLiker 3000",
-        statusActive: "Ativo & Dançando",
-        statusPaused: "Pronto (Pausado)",
-        statusSilent: "Monitorando Silencioso",
-        allRooms: "Todas as Salas",
-        langLabel: "Idioma: Português (Brasil)",
-        iglooProgress: "Progresso do Iglu",
-        detectedLikes: "Likes Atuais",
-        targetGoal: "Meta de Likes",
-        likesUnit: "curtidas",
-        goalUnit: "Meta:",
-        tabPhrases: "Frases",
-        tabActions: "Ações",
-        tabStudio: "Estúdio",
-        rotatePhrases: "Alternar frases de likes",
-        randomDelay: "Anti-Spam randômico (9s a 11s)",
-        deactivatePhrases: "Desativar frases (Modo silencioso)",
-        autoDance: "Auto-Dançar ('D')",
-        autoWave: "Auto-Acenar ('W' - Anti-AFK)",
-        repeatAction: "Repetir ação continuamente",
-        actionInterval: "Intervalo de Ação:",
-        nextMsgTitle: "Próxima Mensagem (Likes):",
-        startBot: "LIGAR BOT",
-        stopBot: "PAUSAR BOT",
-        studioPlaceholder: "Digite a nova frase...",
-        studioAdd: "+ ADICIONAR",
-        studioCap: "Slot: ",
-        studioMaxAlert: "Limite máximo de 6 frases atingido!",
-        editPrompt: "Editar frase:"
+        title: "IglooLiker 3000", statusActive: "Ativo & Dançando", statusPaused: "Pronto (Pausado)",
+        statusSilent: "Monitorando Silencioso", allRooms: "Todas as Salas", langLabel: "Idioma: Português (Brasil)",
+        iglooProgress: "Progresso do Iglu", detectedLikes: "Likes Atuais", targetGoal: "Meta de Likes",
+        likesUnit: "curtidas", goalUnit: "Meta:", tabPhrases: "Frases", tabActions: "Ações", tabStudio: "Estúdio",
+        rotatePhrases: "Alternar frases de likes", randomDelay: "Anti-Spam randômico (9s a 11s)",
+        deactivatePhrases: "Desativar frases (Modo silencioso)", autoDance: "Auto-Dançar ('D')",
+        autoWave: "Auto-Acenar ('W' - Anti-AFK)", repeatAction: "Repetir ação continuamente",
+        actionInterval: "Intervalo de Ação:", nextMsgTitle: "Próxima Mensagem (Likes):",
+        startBot: "LIGAR BOT", stopBot: "PAUSAR BOT", studioPlaceholder: "Digite a nova frase...",
+        studioAdd: "+ ADICIONAR", studioCap: "Slot: ", studioMaxAlert: "Limite máximo de 6 frases atingido!", editPrompt: "Editar frase:"
     }
 };
 
@@ -72,6 +34,8 @@ class BoosterState {
     constructor() {
         this.SESSION_KEY = 'cpj_tab_state_v3';
         this.SHARED_KEY = 'cpj_shared_data_v3';
+        this.PENGUIN_KEY_PREFIX = 'cpj_penguin_';
+        this.currentPenguin = null;
         this.listeners = new Map();
         this.data = {
             isRunning: false, autoDance: true, autoWave: false, repeatAction: false,
@@ -94,13 +58,50 @@ class BoosterState {
         }
     }
 
+    loadPenguin(username) {
+        if (!username) return;
+        this.currentPenguin = String(username).toLowerCase().trim();
+        try {
+            const raw = localStorage.getItem(this.PENGUIN_KEY_PREFIX + this.currentPenguin);
+            if (raw) {
+                const p = JSON.parse(raw);
+                this.data.currentLikes = (p.likes !== undefined) ? Number(p.likes) || 0 : 0;
+                this.data.targetGoal = (p.goal !== undefined) ? Number(p.goal) || 1000 : 1000;
+                ['autoDance', 'autoWave', 'repeatAction', 'rotatePhrases', 'randomDelay', 'deactivatePhrases'].forEach(k => {
+                    if (p[k] !== undefined) this.data[k] = !!p[k];
+                });
+                this.data.actionInterval = (p.actionInterval !== undefined) ? Number(p.actionInterval) || 7 : 7;
+            } else {
+                this.data.currentLikes = 0; this.data.targetGoal = 1000;
+                this.data.autoDance = true; this.data.autoWave = false; this.data.repeatAction = false;
+                this.data.actionInterval = 7; this.data.deactivatePhrases = false;
+                this.data.rotatePhrases = true; this.data.randomDelay = true;
+                this.savePenguin();
+            }
+        } catch (e) {}
+        this.validateGoal();
+        this.notify('currentPenguin', this.currentPenguin);
+    }
+
+    savePenguin() {
+        const key = this.currentPenguin ? (this.PENGUIN_KEY_PREFIX + this.currentPenguin) : (this.PENGUIN_KEY_PREFIX + '_default');
+        try {
+            localStorage.setItem(key, JSON.stringify({
+                likes: this.data.currentLikes, goal: this.data.targetGoal,
+                autoDance: this.data.autoDance, autoWave: this.data.autoWave,
+                repeatAction: this.data.repeatAction, actionInterval: this.data.actionInterval,
+                deactivatePhrases: this.data.deactivatePhrases, rotatePhrases: this.data.rotatePhrases,
+                randomDelay: this.data.randomDelay
+            }));
+        } catch (e) {}
+        this.saveSession();
+    }
+
     load() {
         try {
             const rawShared = localStorage.getItem(this.SHARED_KEY);
             if (rawShared) {
                 const p = JSON.parse(rawShared);
-                if (p.goal) this.data.targetGoal = Number(p.goal) || 1000;
-                if (p.likes) this.data.currentLikes = Number(p.likes) || 0;
                 if (p.lang && (p.lang === 'en' || p.lang === 'pt')) this.data.lang = p.lang;
                 if (Array.isArray(p.phrases) && p.phrases.length > 0) {
                     this.data.phrases = p.phrases.slice(0, 6).map(item => {
@@ -117,9 +118,9 @@ class BoosterState {
             if (rawSession) {
                 const s = JSON.parse(rawSession);
                 ['autoDance', 'autoWave', 'repeatAction', 'rotatePhrases', 'randomDelay', 'deactivatePhrases'].forEach(k => {
-                    if (s[k] !== undefined) this.data[k] = !!s[k];
+                    if (s[k] !== undefined && !this.currentPenguin) this.data[k] = !!s[k];
                 });
-                if (s.actionInterval !== undefined) this.data.actionInterval = Number(s.actionInterval) || 7;
+                if (s.actionInterval !== undefined && !this.currentPenguin) this.data.actionInterval = Number(s.actionInterval) || 7;
                 if (s.activeTab) this.data.activeTab = s.activeTab;
             }
         } catch (e) {}
@@ -129,7 +130,6 @@ class BoosterState {
     saveShared() {
         try {
             localStorage.setItem(this.SHARED_KEY, JSON.stringify({
-                goal: this.data.targetGoal, likes: this.data.currentLikes,
                 lang: this.data.lang, phrases: this.data.phrases
             }));
         } catch (e) {}
@@ -151,10 +151,12 @@ class BoosterState {
     set(key, val) {
         this.data[key] = val;
         this.notify(key, val);
-        if (['autoDance', 'autoWave', 'repeatAction', 'actionInterval', 'rotatePhrases', 'randomDelay', 'deactivatePhrases', 'activeTab'].includes(key)) {
-            this.saveSession();
-        } else if (['targetGoal', 'currentLikes', 'lang', 'phrases'].includes(key)) {
+        if (['autoDance', 'autoWave', 'repeatAction', 'actionInterval', 'rotatePhrases', 'randomDelay', 'deactivatePhrases', 'currentLikes', 'targetGoal'].includes(key)) {
+            this.savePenguin();
+        } else if (['lang', 'phrases'].includes(key)) {
             this.saveShared();
+        } else if (key === 'activeTab') {
+            this.saveSession();
         }
     }
 

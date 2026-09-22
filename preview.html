@@ -237,13 +237,27 @@
                 }
             });
 
-            // Botão Alternar Sala
+            // Botão Alternar Sala (Simula Mudança de Sala -> Auto-Pause)
             const btnRoom = document.getElementById('btn-toggle-room');
             btnRoom.addEventListener('click', () => {
                 const current = state.get('isWelcomeRoom');
                 state.set('isWelcomeRoom', !current);
                 state.set('currentRoom', !current ? 'Welcome Room' : 'Town');
                 btnRoom.textContent = `Alternar Sala (Atual: ${!current ? 'Welcome Room' : 'Town'})`;
+                if (state.get('isRunning')) {
+                    engine.stop();
+                    ui.updateAll();
+                }
+            });
+
+            // Atalho 'M' para abrir mapa no preview -> Auto-Pause
+            window.addEventListener('keydown', (e) => {
+                if ((e.key === 'm' || e.key === 'M') && !e.target.closest('input, textarea, .cpj-dark-prompt-overlay')) {
+                    if (state.get('isRunning')) {
+                        engine.stop();
+                        ui.updateAll();
+                    }
+                }
             });
 
             // Botão +1 Like Simulado

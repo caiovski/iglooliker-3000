@@ -10,8 +10,9 @@ class BoosterEngine {
         this.timerId = null;
         this.actionTimer = null;
         this.actionCycleIndex = 0;
+        this.lastRoom = null;
         this.initWorker();
-        this.startLikesPolling();
+        this.startSafetyPolling();
     }
 
     initWorker() {
@@ -37,43 +38,31 @@ class BoosterEngine {
         }
     }
 
-    startLikesPolling() {
-        this.hookNetworkMessages();
-        setInterval(() => this.detectPenguinLikes(), 3000);
+    startSafetyPolling() {
+        setInterval(() => this.pollGameSafety(), 400);
     }
 
-    hookNetworkMessages() {
-        try {
-            const games = [window.game, window.yukon?.game, ...(window.Phaser?.GAMES ? Object.values(window.Phaser.GAMES) : [])].filter(Boolean);
-            for (const g of games) {
-                const net = g.network || g.scene?.getScene?.('Main')?.network;
-                if (net && !net.__cpj_hooked) {
-                    net.__cpj_hooked = true;
-                    const orig = net.onMessage;
-                    if (typeof orig === 'function') {
-                        net.onMessage = (msg) => {
-                            try {
-                                const args = msg?.args || msg;
-                                const l = args?.likes ?? args?.iglooLikes ?? args?.igloo?.likes;
-                                if (typeof l === 'number' && l >= 0) this.state.updateLikes(l);
-                            } catch (e) {}
-                            return orig.call(net, msg);
-                        };
-                    }
-                }
-            }
-        } catch (e) {}
-    }
-
-    detectPenguinLikes() {
+    pollGameSafety() {
         try {
             const games = [window.game, window.yukon?.game, ...(window.Phaser?.GAMES ? Object.values(window.Phaser.GAMES) : [])].filter(Boolean);
             for (const g of games) {
                 for (const sc of (g.scene?.scenes || [])) {
-                    const client = sc.world?.client || sc.client;
-                    if (client?.penguin) {
-                        const l = client.penguin.iglooLikes ?? client.penguin.likes ?? client.penguin.igloo?.likes ?? client.iglooLikes;
-                        if (typeof l === 'number') this.state.updateLikes(l);
+                    const world = sc.world || sc;
+                    const client = world.client || sc.client;
+                    if (client?.penguin?.username) {
+                        const u = String(client.penguin.username).toLowerCase().trim();
+                        if (this.state.currentPenguin !== u) this.state.loadPenguin(u);
+                    }
+                    const r = world.room?.id ?? client?.room?.id ?? client?.penguin?.room ?? world.roomKey;
+                    if (r !== undefined && r !== null) {
+                        if (this.lastRoom !== null && this.lastRoom !== r && this.state.get('isRunning')) {
+                            this.stop();
+                        }
+                        this.lastRoom = r;
+                    }
+                    const isMap = sc.interface?.map?.visible || client?.interface?.map?.visible || sc.world?.client?.interface?.main?.map?.visible;
+                    if (isMap && this.state.get('isRunning')) {
+                        this.stop();
                     }
                 }
             }
