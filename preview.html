@@ -165,6 +165,7 @@
         <div class="preview-test-bar">
             <div class="preview-title">IglooLiker 3000 - Ambiente de Simulação Universal</div>
             <div class="preview-controls">
+                <button class="test-btn" id="btn-toggle-penguin">Alternar Pinguim (Atual: Pinguim A)</button>
                 <button class="test-btn" id="btn-toggle-room">Alternar Sala (Atual: Welcome Room)</button>
                 <button class="test-btn" id="btn-add-like">+1 Like Simulado</button>
             </div>
@@ -258,6 +259,16 @@
                         ui.updateAll();
                     }
                 }
+            });
+
+            // Botão Alternar Pinguim (Testa persistência individual de posição por pinguim)
+            let curPenguin = 'Pinguim A';
+            state.loadPenguin('pinguim_a');
+            const btnPenguin = document.getElementById('btn-toggle-penguin');
+            btnPenguin.addEventListener('click', () => {
+                curPenguin = (curPenguin === 'Pinguim A') ? 'Pinguim B' : 'Pinguim A';
+                btnPenguin.textContent = `Alternar Pinguim (Atual: ${curPenguin})`;
+                state.loadPenguin(curPenguin.toLowerCase().replace(' ', '_'));
             });
 
             // Botão +1 Like Simulado

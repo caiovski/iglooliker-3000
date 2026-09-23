@@ -4,7 +4,7 @@
 
 <br />
 
-[![Version](https://img.shields.io/badge/Version-3.1.0-00e5ff?style=for-the-badge&logoColor=white)](https://play.cpjourney.net)
+[![Version](https://img.shields.io/badge/Version-3.2.0-00e5ff?style=for-the-badge&logoColor=white)](https://play.cpjourney.net)
 [![Platform](https://img.shields.io/badge/Platform-CPJ%20(Yukon%20HTML5)-0072ff?style=for-the-badge&logoColor=white)](https://play.cpjourney.net)
 [![Author](https://img.shields.io/badge/Author-CAIOVSKI-00e5ff?style=for-the-badge&logo=github&logoColor=white)](https://github.com/caiovski)
 [![License: MIT](https://img.shields.io/badge/License-MIT-0072ff?style=for-the-badge&logoColor=white)](./LICENSE)
@@ -142,6 +142,7 @@ To comply with the Club Penguin Journey chat filter and prevent automatic muting
 | +---------------------------------------------------------------------+ |
 | |                            START BOT                                | |
 | +---------------------------------------------------------------------+ |
+|                  Version 3.2.0 Made by Caiovski                         |
 +-------------------------------------------------------------------------+
 ```
 
@@ -154,6 +155,7 @@ To comply with the Club Penguin Journey chat filter and prevent automatic muting
    - **Studio:** Create up to 6 custom phrases, edit existing ones, and toggle active/inactive phrases via the eye icon.
 3. **Activating the Bot:**
    - Click **START BOT** (vibrant blue). The button switches to **PAUSE BOT** (warm red) and the status dot turns green.
+   - The card footer displays `Version 3.2.0 Made by Caiovski` with an integrated hyperlink to [Caiovski's GitHub profile](https://github.com/caiovski).
    - Minimizing (`_`) shrinks the window to an ultra-compact 56px header pill.
    - Closing (`X`) hides the modal while keeping the bot running in the background until paused.
 4. **Moving and Resizing:**
@@ -177,41 +179,91 @@ You can test the entire user interface and logic locally without opening the gam
 
 ```
 iglooliker-3000/
-|-- cpj_igloo_booster.user.js   # Complete standalone userscript (v3.1.0)
+|-- cpj_igloo_booster.user.js   # Complete standalone userscript (v3.2.0)
 |-- preview.html                # Interactive local simulation preview
 |-- README.md                   # Project documentation
 |-- LICENSE                     # MIT License file
 |-- assets/                     # Design mockups, UI reference sprites, banners, and SVGs
 |   |-- header-banner.svg       # Animated header banner with blue frame and badges
-|   |-- modal-hud-preview.svg   # Vector graphic with clicking mouse animation (Start -> Stop -> Start)
+|   |-- updates-banner.svg      # Animated update release banner with cyan border and snow
+|   |-- animated-igloo-interactive.svg # Standalone SMIL click-toggle interactive igloo
+|   |-- igloo-state-off.svg     # Idle offline igloo icon (Zzz sleeping state)
+|   |-- igloo-state-on.svg      # Running online igloo icon (Weather vane, gusts & fire)
+|   |-- modal-hud-preview.svg   # Vector graphic with clicking mouse animation
 |   |-- divider.svg             # Animated frost blue diamond crystal divider
 |   |-- footer-banner.svg       # Animated footer watermark with CAIOVSKI branding
 |   |-- design/                 # Reference screenshots and UI layouts
 |   `-- welcome room/           # Background assets
 |-- core/                       # Modular business logic (< 250 lines)
-|   |-- engine.js               # Background timer, chat dispatch, wave & dance loops
-|   `-- state.js                # Reactive state, sessionStorage & localStorage sync, validation
+|   |-- engine.js               # Background timer, auto-pause room/map monitor, chat dispatch
+|   `-- state.js                # Per-penguin profiles, reactive state, cross-tab sync
 |-- ui/                         # Modular user interface components (< 250 lines)
-|   |-- components.js           # Modal DOM construction, 8-way resizers, Studio CRUD, isolation
-|   |-- icons.js                # SVG vector icons (pure vectors, zero emojis)
-|   `-- styles.css              # Club Penguin authentic styles, animations, snow slider
+|   |-- components.js           # Modal DOM, floating bubble drag, dark prompt dialog
+|   |-- icons.js                # SVG vector icons (spinning vane, classic igloo, heart badge)
+|   `-- styles.css              # Club Penguin authentic styles, 3D snowball slider, cursors
 |-- updates/                    # Technical sprint reports
 |   `-- update/
-|       `-- update_1.md         # Release 3.1.0 comprehensive architecture sprint report
+|       |-- update_1.md         # Release 3.1.0 comprehensive architecture sprint report
+|       `-- update_2.md         # Release 3.2.0 per-penguin profiles & safety sprint report
 `-- openspec/                   # Technical architecture proposals, specs, and tasks
     `-- changes/
         |-- cpj-afk-igloo-booster/
-        `-- multi-penguin-actions-studio/
-            |-- design.md       # Technical design specification
-            |-- proposal.md     # Architecture proposal
-            `-- tasks.md        # Comprehensive task breakdown
+        |-- multi-penguin-actions-studio/
+        `-- penguin-profiles-and-auto-pause/
 ```
 
 <img src="assets/divider.svg" alt="Divider" width="100%" />
 
-## Update History (Sprint Log)
+## 🕹️ Histórico de Updates Realizados (Sprint de Inovação)
 
-### 1. Release 3.1.0 (NOVO!!!) — 21/09/2026: Multi-Penguin Actions & Phrase Studio Suite
+<div align="center">
+  <img src="assets/updates-banner.svg?v=3.2.0" width="100%" alt="IglooLiker Updates" />
+</div>
+
+<br />
+
+### 🔘 Interactive Igloo Launcher Showcase (Click to Toggle ON / OFF)
+
+Test the interactive floating launcher directly inside this catalog. Click on the igloo below to toggle between **Offline / Sleeping State (OFF)** and **Live Automated Farming State (ON)** featuring the animated silver rooster weather vane, wind gusts, chimney smoke puffs, and warm glowing interior hearth:
+
+<div align="center">
+
+<details>
+  <summary style="list-style: none; cursor: pointer; display: inline-block;">
+    <br />
+    <img src="assets/igloo-state-off.svg" alt="Igloo Launcher (OFF) - Click to Turn ON" width="150" />
+    <br />
+    <kbd>👆 CLICK IGLOO TO TURN ON</kbd>
+    <br />
+    <sub><i>Status: Bot Offline • Sleeping Idle Mode</i></sub>
+  </summary>
+  <br />
+  <a href="assets/animated-igloo-interactive.svg" target="_blank" title="Open Full Standalone Interactive Vector (SMIL Animated)">
+    <img src="assets/igloo-state-on.svg" alt="Igloo Launcher (ON) - Click to inspect standalone" width="165" />
+  </a>
+  <br />
+  <kbd>✨ BOT ONLINE & FARMING • CLICK AGAIN ABOVE TO TOGGLE OFF</kbd>
+  <br />
+  <sub><i>Animations Active: Spinning Rooster Weather Vane • Continuous Wind Gusts • Chimney Smoke • Window Fire Hearth • Dynamic Diffuse Floor Light</i></sub>
+  <br />
+  <small><a href="assets/animated-igloo-interactive.svg" target="_blank">🔗 <i>Open standalone SMIL vector for native SVG click triggers</i></a></small>
+</details>
+
+</div>
+
+<br />
+
+### 1. Release 3.2.0 (NOVO!!!) — 23/09/2026: Per-Penguin Profiles, Auto-Pause Safety & Animated Launcher Suite
+- **Per-Penguin Account Profiles (`cpj_penguin_{username}`):** Automatic detection of authenticated game user via Yukon client (`client.penguin.username`), creating isolated persistent profiles for target goals, current likes, dance/wave actions, and interval preferences without cross-account state contamination.
+- **Auto-Pause Safety Engine:** Real-time room transition detection (`world.room.id`) and Map interface monitor (`'Map'` scene active, canvas click, and <kbd>M</kbd> hotkey) that automatically suspends bot loops into a safe idle state, preventing chat flooding and server disconnects when browsing or traveling.
+- **Asynchronous Dark Prompt Dialog ("Telinha Preta"):** Replaced blocking browser `window.prompt()` with an in-DOM `#1c1b22` modal dialog, preserving WebSocket heartbeats during phrase editing and eliminating game canvas freeze-outs.
+- **Authentic 3D Organic Snowball Slider:** Hand-packed snowball thumb geometry (28px) with discrete second snapping on an expanded 16px track with dynamic snow-to-amber progress styling.
+- **Interactive Animated Igloo Launcher:** 72px floating launcher featuring a spinning silver rooster weather vane, 3 continuous wind gusts, chimney smoke puffs, glowing window fire, and sleeping offline states with smooth pointer interaction.
+- **Ephemeral Per-Penguin Drag Memory & Dynamic Card Placement:** Pointer-based dragging with `sessionStorage` position persistence, pointer/grab cursor states, and dynamic positioning that places the modal card directly beneath the floating bubble wherever it moves.
+- **Heart Badge & Header Alignment Polish:** Official pink heart badge (`#ff2a6d`) integrated into the modal header, enlarged 28px left title igloo icon with vertical baseline alignment, and classic smooth igloo icon restored to the progression section.
+- **Comprehensive Sprint Report:** Detailed architectural documentation and data flow diagrams published in [`updates/update/update_2.md`](./updates/update/update_2.md).
+
+### 2. Release 3.1.0 — 21/09/2026: Multi-Penguin Actions & Phrase Studio Suite
 - **Multi-Tab State Segregation (`sessionStorage` vs `localStorage`):** Isolated per-tab execution (`autoDance`, `autoWave`, `repeatAction`, `actionInterval`, `deactivatePhrases`, `activeTab`, `running`) so multiple accounts (broadcasters and spectators) run independently in separate tabs without cross-tab state bleed.
 - **Shared Phrases Repository with Real-Time Sync:** Custom phrases, active/inactive states, target goals, and language preference are persisted in `localStorage` and synchronized across all open penguin tabs in real time via native `storage` events.
 - **Phrases Studio CRUD & Eye Filter:** Full phrase management (create, edit, delete, 6 slots max) with light gray eye toggle icons (closed eye = active/in rotation, open eye = inactive/excluded), empty-prompt fallback, autofocus, and <kbd>Enter</kbd> key support.
@@ -220,15 +272,6 @@ iglooliker-3000/
 - **8-Way Window Resizing & Proportional Scaling:** Added 8-direction edge and corner resizers with `--cpj-scale` dynamic CSS scaling (0.75x to 1.4x) and capture-phase event isolation preventing penguin walking on the game canvas.
 - **Header-Only Minimize & Deterministic F5 Reset:** Collapses into a clean 56px header pill when minimized. Refreshing (<kbd>F5</kbd>) deterministically resets the card to its canonical delimiter size (370px × 500px) and position (top: 25px, right: 25px).
 - **Comprehensive Sprint Report:** Detailed architectural documentation and data flow diagrams published in [`updates/update/update_1.md`](./updates/update/update_1.md).
-
-### 2. Release 3.0.0 — 20/09/2026: Safe Chat Automation & Yukon Engine
-- **Chat Duplication Bugfix:** Selected single active input element and eliminated redundant `insertFromPaste` input event dispatching, ensuring single-instance text entry.
-- **HUD Send Button Click Simulation:** Implemented proportional canvas pointer event dispatching targeting the exact coordinates of `chat_send_button` (`x=1026, y=923` in 1520x960 resolution).
-- **Native Page Keyboard Events:** Utilized `pageWin.KeyboardEvent` to bypass Firefox Gecko XrayWrapper property masking on synthetic keydown events.
-- **One K Target Terminology:** Updated rotating phrase catalog to explicitly state the 1k goal written in words (`one k`) to prevent chat filter suppression.
-- **Anti-Spam Delay Window:** Increased randomized anti-spam jitter window from 7-9s to 9-11s for elevated server safety.
-- **Universal Room Support:** Removed Welcome Room confinement, allowing the bot to operate in any public or private room.
-- **Single Action Button:** Implemented unified 100% full-width toggle button switching between Start (Blue) and Pause (Red).
 
 <img src="assets/divider.svg" alt="Divider" width="100%" />
 

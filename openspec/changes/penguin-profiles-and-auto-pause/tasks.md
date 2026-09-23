@@ -58,3 +58,26 @@
 - [x] 11.1 Remove blue bezel container and render pure 3D snowball directly on the interval track.
 - [x] 11.2 Introduce organic asymmetrical contour with vector micro-bumps (Option 5), breaking geometric perfection into an authentic hand-packed snowball.
 - [x] 11.3 Enlarge slider track height to 16px and snowball thumb to 28px with enhanced 2.6px dark-blue outline and deeper bottom shadow.
+
+## 12. Animated Igloo Icon Integration (Silver Weather Vane & State Switcher)
+- [x] 12.1 Embed the official Option 1 Animated Igloo SVG in `ICONS.igloo` with silver rooster weather vane, wind gusts, stovepipe chimney, and dual online/offline state layers.
+- [x] 12.2 Add keyframe animations and utility classes (`cpj-anim-*`) to userscript CSS and `ui/styles.css`.
+- [x] 12.3 Enlarge floating launcher button `#cpj-launcher` from 52px to 62px and inner SVG from 28px to 44px, keeping circular blue gradient background and cyan border.
+- [x] 12.4 Wire up reactive `.is-running` class toggling on `#cpj-launcher` and `#cpj-modal` in `updateUI()`.
+- [x] 12.5 Update `ui/icons.js` and verify clean execution with zero linter errors or regressions.
+
+## 13. Floating Launcher Drag-and-Drop & Per-Penguin Ephemeral Position Memory
+- [x] 13.1 Enlarge floating launcher bubble from 62px to 72px and inner SVG from 44px to 52px in CSS (`ui/styles.css` & `cpj_igloo_booster.user.js`), keeping circular blue gradient background and cyan border.
+- [x] 13.2 Implement pointer-based dragging on the floating launcher with viewport boundary clamping and clean click-vs-drag distinction (> 5px movement suppresses modal toggle).
+- [x] 13.3 Implement ephemeral per-penguin position memory using `sessionStorage` (`cpj_launcher_pos_${penguin}`), ensuring positions reset back to original default corner upon tab/browser closure and restore when switching penguins.
+- [x] 13.4 Synchronize logic across `ui/components.js` and `cpj_igloo_booster.user.js`, ensuring modular line limits are preserved (`ui/components.js` < 250 lines).
+- [x] 13.5 Verify in preview environment via interactive browser subagent.
+
+## 15. Pointer/Grab Cursors & Classic Igloo Icon in Likes Progression
+- [x] 15.1 Change floating launcher hover cursor to `pointer` (hand with pointing finger) and drag cursor to `grab` (open hand, replacing 4-way arrows) across `ui/styles.css` and `cpj_igloo_booster.user.js`.
+- [x] 15.2 Restore classic smooth igloo SVG (`iglooClassic`) without snow brick lines in `ui/icons.js`, `cpj_igloo_booster.user.js`, and `ui/components.js`.
+- [x] 15.3 Apply `display: inline-flex; align-items: center; gap: 6px;` to `#cpj-prog-title` and `#cpj-lbl-prog` to center the classic igloo vertically with the "Igloo Likes Progression" text.
+- [x] 15.4 Maintain `< 250` lines in `ui/components.js` (248 lines) and verify visually in browser.
+
+
+

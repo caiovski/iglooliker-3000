@@ -256,6 +256,13 @@
     </g>
   </g>
 
+  <!-- Footer Version and Author Credits -->
+  <g transform="translate(210, 546)">
+    <text text-anchor="middle" font-family="'Fredoka', 'Segoe UI', Arial, sans-serif" font-size="11.5" fill="#ffffff" letter-spacing="0.3">
+      Version 3.2.0 Made by <tspan fill="#ffd700" text-decoration="underline">Caiovski</tspan>
+    </text>
+  </g>
+
   <!-- ==================== ANIMATED MOUSE CURSOR ==================== -->
   <g class="mouse-cursor">
     <path d="M 0 0 L 0 20 L 4.8 15.5 L 9 24 L 12.5 22.5 L 8.3 14.5 L 14.5 14.5 Z" fill="#ffffff" stroke="#001830" stroke-width="2" stroke-linejoin="round" />

@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" width="100%" height="220">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="cpUpdBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00a8ff" />
+      <stop offset="45%" stop-color="#0084d6" />
+      <stop offset="85%" stop-color="#0066b3" />
+      <stop offset="100%" stop-color="#004a88" />
+    </linearGradient>
+
+    <!-- Glass Top Highlight -->
+    <linearGradient id="cpUpdGlass" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.32" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Animated Cyan Glow Border -->
+    <linearGradient id="cpUpdBorder" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00e5ff">
+        <animate attributeName="stop-color" values="#00e5ff;#7fe3ff;#0099ff;#00e5ff" dur="4s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="50%" stop-color="#7fe3ff">
+        <animate attributeName="stop-color" values="#7fe3ff;#00e5ff;#7fe3ff;#0099ff" dur="4s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="100%" stop-color="#00a8ff">
+        <animate attributeName="stop-color" values="#00a8ff;#00e5ff;#7fe3ff;#00a8ff" dur="4s" repeatCount="indefinite" />
+      </stop>
+    </linearGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="cpUpdShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#00143c" flood-opacity="0.75" />
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes pulseGlowUpd {
+      0%, 100% { stroke-opacity: 0.85; stroke-width: 4px; }
+      50% { stroke-opacity: 1; stroke-width: 5.5px; }
+    }
+    @keyframes snowDriftUpd {
+      0% { transform: translateY(-15px) translateX(0px); opacity: 0; }
+      25% { opacity: 0.85; }
+      75% { opacity: 0.85; }
+      100% { transform: translateY(240px) translateX(25px); opacity: 0; }
+    }
+    .upd-frame { animation: pulseGlowUpd 3s ease-in-out infinite; }
+    .snow-p1 { animation: snowDriftUpd 5.5s linear infinite; }
+    .snow-p2 { animation: snowDriftUpd 7.5s linear infinite 1.8s; }
+    .snow-p3 { animation: snowDriftUpd 6.5s linear infinite 3.5s; }
+    .snow-p4 { animation: snowDriftUpd 8.5s linear infinite 0.8s; }
+    .font-title {
+      font-family: 'Fredoka', 'Balsamiq Sans', 'Segoe UI', Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+    .font-sub {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-weight: 700;
+    }
+  </style>
+
+  <!-- Outer Drop Shadow Container -->
+  <rect x="15" y="15" width="870" height="190" rx="24" fill="url(#cpUpdBg)" filter="url(#cpUpdShadow)" />
+
+  <!-- Inner Dark Blue Frame Border -->
+  <rect x="15" y="15" width="870" height="190" rx="24" fill="none" stroke="#003566" stroke-width="8" />
+
+  <!-- Vibrant Cyan Animated Border -->
+  <rect x="15" y="15" width="870" height="190" rx="24" fill="none" stroke="url(#cpUpdBorder)" class="upd-frame" />
+
+  <!-- Glass Highlight Top Half -->
+  <path d="M 17 39 C 17 25.7 27.7 15 41 15 L 859 15 C 872.3 15 883 25.7 883 39 L 883 95 Q 450 120 17 95 Z" fill="url(#cpUpdGlass)" />
+
+  <!-- Snowfall Particles -->
+  <g fill="#ffffff">
+    <circle cx="85" cy="10" r="2.5" opacity="0.6" class="snow-p1" />
+    <circle cx="210" cy="5" r="3.2" opacity="0.75" class="snow-p2" />
+    <circle cx="360" cy="15" r="2.2" opacity="0.5" class="snow-p3" />
+    <circle cx="520" cy="0" r="3.5" opacity="0.8" class="snow-p4" />
+    <circle cx="680" cy="10" r="2.6" opacity="0.7" class="snow-p1" />
+    <circle cx="810" cy="5" r="3.0" opacity="0.65" class="snow-p2" />
+  </g>
+
+  <!-- Left Header Icon: Igloo with Rooster & Wind -->
+  <g transform="translate(60, 42) scale(2.8)">
+    <!-- Snow Base -->
+    <ellipse cx="14" cy="23" rx="12" ry="2.5" fill="#a8e0ff" opacity="0.7"/>
+    <!-- Dome -->
+    <path d="M 6 21 C 5 13 9 5 17 5 C 23 5 26 12 25 21 Z" fill="#ffffff" stroke="#003566" stroke-width="1.2"/>
+    <path d="M 8.5 16 C 13 14 20 14 24.5 16.5" fill="none" stroke="#55aee8" stroke-width="1"/>
+    <path d="M 10 11.5 C 13.5 10 18 10 23 12" fill="none" stroke="#55aee8" stroke-width="1"/>
+    <!-- Chimney -->
+    <path d="M 19.3 7 L 19.8 2.8 L 21.8 2.8 L 21.5 7 Z" fill="#60727f" stroke="#101c24" stroke-width="0.7"/>
+    <rect x="19.4" y="4.6" width="2.3" height="0.85" rx="0.3" fill="#e74c3c"/>
+    <ellipse cx="20.8" cy="2.8" rx="2.5" ry="0.8" fill="#202b33"/>
+    <!-- Entrance Tunnel -->
+    <path d="M 3.5 21 C 3.5 14 6 12.5 11 12.5 C 15 12.5 15.5 14.5 15.5 21 Z" fill="#eaf7ff" stroke="#003566" stroke-width="1.2"/>
+    <path d="M 7 21 C 7 16 8.5 15 10.5 15 C 12.5 15 13 16 13 21 Z" fill="#ffe680" stroke="#d48800" stroke-width="0.6"/>
+    <!-- Weather Vane Rooster -->
+    <line x1="11.5" y1="6.8" x2="11.5" y2="4.4" stroke="#253542" stroke-width="0.9"/>
+    <line x1="6.2" y1="4.6" x2="14.4" y2="4.6" stroke="#16222b" stroke-width="0.7"/>
+    <polygon points="5.6,4.6 7.8,3.7 7.3,4.6 7.8,5.5" fill="#eaf1f7"/>
+  </g>
+
+  <!-- Title & Subtitle Content -->
+  <g transform="translate(165, 0)">
+    <!-- Title Text with Heavy Club Penguin 3D Outline -->
+    <text x="320" y="85" text-anchor="middle" font-size="38" fill="#002d55" class="font-title">
+      IGLOOLIKER 3000 UPDATES
+    </text>
+    <text x="320" y="82" text-anchor="middle" font-size="38" fill="#ffffff" class="font-title">
+      IGLOOLIKER 3000 UPDATES
+    </text>
+
+    <!-- Subtitle Banner Tag -->
+    <text x="320" y="116" text-anchor="middle" font-size="14" fill="#a4e7ff" class="font-sub" letter-spacing="3.5">
+      INNOVATION &amp; ARCHITECTURE SPRINT RELEASES
+    </text>
+
+    <!-- Badges Row -->
+    <g transform="translate(40, 136)">
+      <!-- Version Badge -->
+      <rect x="0" y="0" width="105" height="28" rx="14" fill="#002b4d" stroke="#00e5ff" stroke-width="1.8"/>
+      <text x="52" y="18" text-anchor="middle" font-size="11" font-weight="900" fill="#00ffff" font-family="'Segoe UI', Arial, sans-serif">v3.2.0 STABLE</text>
+
+      <!-- Safety Badge -->
+      <rect x="115" y="0" width="135" height="28" rx="14" fill="#002b4d" stroke="#2ed573" stroke-width="1.8"/>
+      <text x="182" y="18" text-anchor="middle" font-size="11" font-weight="900" fill="#2ed573" font-family="'Segoe UI', Arial, sans-serif">🛡️ AUTO-PAUSE SAFE</text>
+
+      <!-- Profiles Badge -->
+      <rect x="260" y="0" width="145" height="28" rx="14" fill="#002b4d" stroke="#ffe853" stroke-width="1.8"/>
+      <text x="332" y="18" text-anchor="middle" font-size="11" font-weight="900" fill="#ffe853" font-family="'Segoe UI', Arial, sans-serif">🐧 PENGUIN PROFILES</text>
+
+      <!-- Animated Igloo Badge -->
+      <rect x="415" y="0" width="140" height="28" rx="14" fill="#002b4d" stroke="#ff2a6d" stroke-width="1.8"/>
+      <text x="485" y="18" text-anchor="middle" font-size="11" font-weight="900" fill="#ff7da7" font-family="'Segoe UI', Arial, sans-serif">💖 ANIMATED IGLOO</text>
+    </g>
+  </g>
+
+  <!-- Right Heart Badge Badge -->
+  <g transform="translate(805, 52) scale(2.6)">
+    <circle cx="0" cy="0" r="13.5" fill="#ff2a6d" stroke="#ffffff" stroke-width="2.5" />
+    <path d="M -6 -2 A 3.5 3.5 0 0 1 0 1 A 3.5 3.5 0 0 1 6 -2 Q 6 4 0 8 Q -6 4 -6 -2 Z" fill="#ffffff" />
+  </g>
+</svg>
