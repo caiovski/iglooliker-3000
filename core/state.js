@@ -53,7 +53,13 @@ class BoosterState {
         this.load();
         if (typeof window !== 'undefined') {
             window.addEventListener('storage', (e) => {
-                if (e.key === this.SHARED_KEY) { this.load(); this.notify('phrases', this.data.phrases); this.notify('lang', this.data.lang); }
+                if (e.key === this.SHARED_KEY) {
+                    this.load();
+                    this.notify('phrases', this.data.phrases);
+                    this.notify('lang', this.data.lang);
+                    this.notify('currentLikes', this.data.currentLikes);
+                    this.notify('targetGoal', this.data.targetGoal);
+                }
             });
         }
     }
@@ -65,14 +71,11 @@ class BoosterState {
             const raw = localStorage.getItem(this.PENGUIN_KEY_PREFIX + this.currentPenguin);
             if (raw) {
                 const p = JSON.parse(raw);
-                this.data.currentLikes = (p.likes !== undefined) ? Number(p.likes) || 0 : 0;
-                this.data.targetGoal = (p.goal !== undefined) ? Number(p.goal) || 1000 : 1000;
                 ['autoDance', 'autoWave', 'repeatAction', 'rotatePhrases', 'randomDelay', 'deactivatePhrases'].forEach(k => {
                     if (p[k] !== undefined) this.data[k] = !!p[k];
                 });
                 this.data.actionInterval = (p.actionInterval !== undefined) ? Number(p.actionInterval) || 7 : 7;
             } else {
-                this.data.currentLikes = 0; this.data.targetGoal = 1000;
                 this.data.autoDance = true; this.data.autoWave = false; this.data.repeatAction = false;
                 this.data.actionInterval = 7; this.data.deactivatePhrases = false;
                 this.data.rotatePhrases = true; this.data.randomDelay = true;
@@ -87,7 +90,6 @@ class BoosterState {
         const key = this.currentPenguin ? (this.PENGUIN_KEY_PREFIX + this.currentPenguin) : (this.PENGUIN_KEY_PREFIX + '_default');
         try {
             localStorage.setItem(key, JSON.stringify({
-                likes: this.data.currentLikes, goal: this.data.targetGoal,
                 autoDance: this.data.autoDance, autoWave: this.data.autoWave,
                 repeatAction: this.data.repeatAction, actionInterval: this.data.actionInterval,
                 deactivatePhrases: this.data.deactivatePhrases, rotatePhrases: this.data.rotatePhrases,
@@ -102,6 +104,8 @@ class BoosterState {
             const rawShared = localStorage.getItem(this.SHARED_KEY);
             if (rawShared) {
                 const p = JSON.parse(rawShared);
+                if (p.goal !== undefined) this.data.targetGoal = Number(p.goal) || 1000;
+                if (p.likes !== undefined) this.data.currentLikes = Number(p.likes) || 0;
                 if (p.lang && (p.lang === 'en' || p.lang === 'pt')) this.data.lang = p.lang;
                 if (Array.isArray(p.phrases) && p.phrases.length > 0) {
                     this.data.phrases = p.phrases.slice(0, 6).map(item => {
@@ -130,7 +134,10 @@ class BoosterState {
     saveShared() {
         try {
             localStorage.setItem(this.SHARED_KEY, JSON.stringify({
-                lang: this.data.lang, phrases: this.data.phrases
+                goal: this.data.targetGoal,
+                likes: this.data.currentLikes,
+                lang: this.data.lang,
+                phrases: this.data.phrases
             }));
         } catch (e) {}
     }
@@ -151,9 +158,9 @@ class BoosterState {
     set(key, val) {
         this.data[key] = val;
         this.notify(key, val);
-        if (['autoDance', 'autoWave', 'repeatAction', 'actionInterval', 'rotatePhrases', 'randomDelay', 'deactivatePhrases', 'currentLikes', 'targetGoal'].includes(key)) {
+        if (['autoDance', 'autoWave', 'repeatAction', 'actionInterval', 'rotatePhrases', 'randomDelay', 'deactivatePhrases'].includes(key)) {
             this.savePenguin();
-        } else if (['lang', 'phrases'].includes(key)) {
+        } else if (['targetGoal', 'currentLikes', 'lang', 'phrases'].includes(key)) {
             this.saveShared();
         } else if (key === 'activeTab') {
             this.saveSession();

@@ -233,6 +233,7 @@ class BoosterUI {
         m.querySelector('#cpj-txt-lang').textContent = t.langLabel || 'Language: English';
         m.querySelector('#cpj-lbl-prog').innerHTML = `${ic.iglooClassic || ic.igloo || ''} ${t.iglooProgress || 'Progression'}`;
         m.querySelector('#cpj-tag-likes').textContent = t.detectedLikes || 'Current Likes'; m.querySelector('#cpj-tag-goal').textContent = t.targetGoal || 'Target Goal';
+        const inL = m.querySelector('#cpj-input-likes'), inG = m.querySelector('#cpj-input-goal'); if (inL && document.activeElement !== inL) inL.value = this.state.get('currentLikes'); if (inG && document.activeElement !== inG) inG.value = this.state.get('targetGoal');
         m.querySelector('#cpj-lbl-lcount').textContent = `${this.state.get('currentLikes')} ${t.likesUnit || 'likes'}`; m.querySelector('#cpj-lbl-gcount').textContent = `${t.goalUnit || 'Goal:'} ${this.state.get('targetGoal')}`;
         m.querySelector('#cpj-badge-percent').textContent = this.state.getPercentage(); m.querySelector('#cpj-prog-fill').style.width = `${this.state.getProgressRatio()}%`;
         const err = this.state.get('goalError'), box = m.querySelector('#cpj-err-box'); box.style.display = err ? 'block' : 'none'; box.textContent = err || '';

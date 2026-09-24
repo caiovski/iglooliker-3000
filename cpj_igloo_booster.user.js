@@ -1516,8 +1516,6 @@
                 const raw = localStorage.getItem(PENGUIN_KEY_PREFIX + this.currentPenguin);
                 if (raw) {
                     const p = JSON.parse(raw);
-                    this.likes = (p.likes !== undefined) ? Number(p.likes) || 0 : 0;
-                    this.goal = (p.goal !== undefined) ? Number(p.goal) || 1000 : 1000;
                     this.autoDance = (p.autoDance !== undefined) ? !!p.autoDance : true;
                     this.autoWave = (p.autoWave !== undefined) ? !!p.autoWave : false;
                     this.repeatAction = (p.repeatAction !== undefined) ? !!p.repeatAction : false;
@@ -1526,8 +1524,6 @@
                     this.rotatePhrases = (p.rotatePhrases !== undefined) ? !!p.rotatePhrases : true;
                     this.randomInterval = (p.randomInterval !== undefined) ? !!p.randomInterval : true;
                 } else {
-                    this.likes = 0;
-                    this.goal = 1000;
                     this.autoDance = true;
                     this.autoWave = false;
                     this.repeatAction = false;
@@ -1545,8 +1541,6 @@
 
         savePenguin() {
             const dataToSave = {
-                likes: this.likes,
-                goal: this.goal,
                 autoDance: this.autoDance,
                 autoWave: this.autoWave,
                 repeatAction: this.repeatAction,
@@ -1563,13 +1557,13 @@
         },
 
         load() {
-            // 1. Carrega dados compartilhados do localStorage
+            // 1. Carrega dados compartilhados do localStorage (Likes, Meta, Idioma e Frases Globais)
             try {
                 const rawShared = localStorage.getItem(SHARED_KEY);
                 if (rawShared) {
                     const parsed = JSON.parse(rawShared);
-                    if (parsed.goal && !this.currentPenguin) this.goal = Number(parsed.goal) || 1000;
-                    if (parsed.likes && !this.currentPenguin) this.likes = Number(parsed.likes) || 0;
+                    if (parsed.goal !== undefined) this.goal = Number(parsed.goal) || 1000;
+                    if (parsed.likes !== undefined) this.likes = Number(parsed.likes) || 0;
                     if (parsed.lang && (parsed.lang === 'en' || parsed.lang === 'pt')) this.lang = parsed.lang;
                     if (Array.isArray(parsed.phrases) && parsed.phrases.length > 0) {
                         this.phrases = parsed.phrases.slice(0, 6).map(p => {
@@ -1603,6 +1597,8 @@
         saveShared() {
             try {
                 localStorage.setItem(SHARED_KEY, JSON.stringify({
+                    goal: this.goal,
+                    likes: this.likes,
                     lang: this.lang,
                     phrases: this.phrases
                 }));
@@ -1948,13 +1944,14 @@
         }
     }, true);
 
-    // Sincronização de frases/idioma entre abas em tempo real
+    // Sincronização de likes, meta, frases e idioma entre abas em tempo real
     window.addEventListener('storage', (e) => {
         if (e.key === SHARED_KEY) {
             state.load();
             renderStudioList();
             updateNextMsgPreview();
             updateLanguageUI();
+            updateUI();
         }
     });
 
@@ -2492,12 +2489,12 @@
         });
     });
 
-    // Inputs de Likes e Goal
+    // Inputs de Likes e Goal (Persistência Global em SHARED_KEY)
     document.getElementById('cpj-likes-inp').addEventListener('input', (e) => {
         const clean = e.target.value.replace(/\D/g, '');
         e.target.value = clean;
         state.likes = parseInt(clean, 10) || 0;
-        state.savePenguin();
+        state.saveShared();
         state.validate();
         updateUI();
     });
@@ -2506,7 +2503,7 @@
         const clean = e.target.value.replace(/\D/g, '');
         e.target.value = clean;
         state.goal = parseInt(clean, 10) || 0;
-        state.savePenguin();
+        state.saveShared();
         state.validate();
         updateUI();
     });
