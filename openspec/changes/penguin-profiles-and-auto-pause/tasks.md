@@ -79,5 +79,9 @@
 - [x] 15.3 Apply `display: inline-flex; align-items: center; gap: 6px;` to `#cpj-prog-title` and `#cpj-lbl-prog` to center the classic igloo vertically with the "Igloo Likes Progression" text.
 - [x] 15.4 Maintain `< 250` lines in `ui/components.js` (248 lines) and verify visually in browser.
 
+## 16. Studio Input Visibility In-Game & Dark Prompt Modal Sovereignty
+- [x] 16.1 Fix Studio input (`#cpj-studio-inp`) visibility inside game servers by applying full CSS shields (`display: block !important; visibility: visible !important; opacity: 1 !important; appearance: none !important;`) and DOM resilience checks.
+- [x] 16.2 Fix Dark Prompt modal sovereignty and backdrop closure: block all pointer/mouse/touch events in capture & bubble phases on `.cpj-dark-prompt-overlay`, and remove backdrop click closing so only 'Cancelar' or 'OK' closes the dialog.
+
 
 

@@ -1113,6 +1113,7 @@
             gap: calc(6px * var(--cpj-scale, 1)) !important;
             margin-bottom: calc(10px * var(--cpj-scale, 1)) !important;
         }
+        #cpj-studio-inp,
         .cpj-studio-input {
             flex: 1 !important;
             height: calc(34px * var(--cpj-scale, 1)) !important;
@@ -1124,7 +1125,14 @@
             font-size: calc(12px * var(--cpj-scale, 1)) !important;
             padding: 0 calc(10px * var(--cpj-scale, 1)) !important;
             outline: none !important;
+            -moz-appearance: none !important;
+            appearance: none !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            box-sizing: border-box !important;
         }
+        #cpj-studio-inp:focus,
         .cpj-studio-input:focus { border-color: #00e5ff !important; }
         .cpj-btn-add {
             background: linear-gradient(180deg, #00c6ff 0%, #0072ff 100%) !important;
@@ -1297,6 +1305,9 @@
             justify-content: center !important;
             user-select: none !important;
             isolation: isolate !important;
+            pointer-events: auto !important;
+            touch-action: none !important;
+            cursor: default !important;
         }
         .cpj-dark-prompt-card {
             background: #1c1b22 !important;
@@ -1309,6 +1320,8 @@
             box-sizing: border-box !important;
             font-family: 'Fredoka', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             animation: cpjPromptIn 0.15s ease-out !important;
+            pointer-events: auto !important;
+            cursor: default !important;
         }
         @keyframes cpjPromptIn {
             from { opacity: 0; transform: scale(0.96); }
@@ -1339,6 +1352,9 @@
             word-break: break-word !important;
         }
         .cpj-dark-prompt-input {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
             width: 100% !important;
             background: #101014 !important;
             border: 2px solid #00cbf7 !important;
@@ -1351,6 +1367,10 @@
             box-shadow: 0 0 0 1px rgba(0, 203, 247, 0.3) !important;
             margin-bottom: 18px !important;
             font-family: inherit !important;
+            pointer-events: auto !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            appearance: none !important;
         }
         .cpj-dark-prompt-input:focus {
             border-color: #00e5ff !important;
@@ -2152,7 +2172,7 @@
             <div class="cpj-tab-panel ${state.activeTab === 'studio' ? 'active' : ''}" id="cpj-panel-studio">
                 <div class="cpj-studio-msg hidden" id="cpj-studio-msg"></div>
                 <div class="cpj-studio-input-wrap">
-                    <input type="text" class="cpj-studio-input" id="cpj-studio-inp" placeholder="${state.lang === 'pt' ? 'Digite a nova frase...' : 'Type new phrase...'}" maxlength="100">
+                    <input type="text" class="cpj-studio-input" id="cpj-studio-inp" placeholder="${state.lang === 'pt' ? 'Digite a nova frase...' : 'Type new phrase...'}" maxlength="100" autocomplete="off" spellcheck="false">
                     <button class="cpj-btn-add" id="cpj-studio-add">+ ADD</button>
                 </div>
                 <div class="cpj-phrase-list" id="cpj-phrase-list"></div>
@@ -2193,6 +2213,29 @@
         const capEl = document.getElementById('cpj-studio-cap');
         const addBtn = document.getElementById('cpj-studio-add');
         if (!listEl) return;
+
+        // Auto-recuperação do input caso seja removido por transições de cena do jogo
+        const wrapEl = document.querySelector('.cpj-studio-input-wrap');
+        let inpEl = document.getElementById('cpj-studio-inp');
+        if (!inpEl && wrapEl) {
+            inpEl = document.createElement('input');
+            inpEl.type = 'text';
+            inpEl.className = 'cpj-studio-input';
+            inpEl.id = 'cpj-studio-inp';
+            inpEl.maxLength = 100;
+            inpEl.autocomplete = 'off';
+            inpEl.spellcheck = false;
+            inpEl.placeholder = (I18N[state.lang] || I18N.en).studioPlaceholder;
+            wrapEl.insertBefore(inpEl, wrapEl.firstChild);
+            inpEl.addEventListener('keydown', (e) => {
+                e.stopPropagation();
+                if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (typeof handleAddPhrase === 'function') handleAddPhrase();
+                }
+            }, true);
+        }
 
         listEl.innerHTML = '';
         state.phrases.forEach((item, idx) => {
@@ -2244,8 +2287,10 @@
         document.getElementById('cpj-lbl-repeat').textContent = t.repeatAction;
         document.getElementById('cpj-lbl-slider').textContent = t.actionInterval;
 
-        document.getElementById('cpj-studio-inp').placeholder = t.studioPlaceholder;
-        document.getElementById('cpj-studio-add').textContent = t.studioAdd;
+        const studioInpEl = document.getElementById('cpj-studio-inp');
+        if (studioInpEl) studioInpEl.placeholder = t.studioPlaceholder;
+        const studioAddBtnEl = document.getElementById('cpj-studio-add');
+        if (studioAddBtnEl) studioAddBtnEl.textContent = t.studioAdd;
 
         document.querySelectorAll('.cpj-lang-item').forEach(el => {
             el.classList.toggle('selected', el.getAttribute('data-lang') === state.lang);
@@ -2646,7 +2691,7 @@
                     <span class="cpj-dark-prompt-domain">${domain}</span>
                 </div>
                 <div class="cpj-dark-prompt-label">${messageText || ''}</div>
-                <input type="text" class="cpj-dark-prompt-input" id="cpj-prompt-input" autocomplete="off" />
+                <input type="text" class="cpj-dark-prompt-input" id="cpj-prompt-input" autocomplete="off" spellcheck="false" />
                 <div class="cpj-dark-prompt-actions">
                     <button type="button" class="cpj-dark-btn-ok" id="cpj-prompt-ok">${okText}</button>
                     <button type="button" class="cpj-dark-btn-cancel" id="cpj-prompt-cancel">${cancelText}</button>
@@ -2680,11 +2725,29 @@
                 }
             }
 
+            // Soberania do modal: impede qualquer vazamento de cliques, ponteiro ou mouse para o jogo/canvas
+            const blockEvents = [
+                'pointerdown', 'pointerup', 'pointermove', 'pointercancel',
+                'mousedown', 'mouseup', 'click', 'dblclick', 'contextmenu',
+                'touchstart', 'touchend', 'touchmove'
+            ];
+            blockEvents.forEach(type => {
+                card.addEventListener(type, (e) => {
+                    e.stopPropagation();
+                });
+                overlay.addEventListener(type, (e) => {
+                    e.stopPropagation();
+                    if (e.target === overlay) {
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            // Soberania do teclado dentro do card
             ['keydown', 'keyup', 'keypress'].forEach(type => {
                 card.addEventListener(type, (e) => {
                     e.stopPropagation();
-                    if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
-                }, true);
+                });
             });
 
             okBtn.addEventListener('click', (e) => {
@@ -2697,11 +2760,8 @@
                 cleanup(null);
             });
 
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) cleanup(null);
-            });
-
-            card.addEventListener('click', (e) => e.stopPropagation());
+            // O clique fora do card (no backdrop) NÃO fecha o card!
+            // Apenas o botão Cancelar (ou tecla Escape) fecha sem salvar.
 
             window.addEventListener('keydown', onKey, true);
 
@@ -2737,8 +2797,9 @@
     }
 
     function handleAddPhrase() {
-        if (!studioInp) return;
-        const val = studioInp.value.trim();
+        const inp = document.getElementById('cpj-studio-inp') || studioInp;
+        if (!inp) return;
+        const val = inp.value.trim();
         const t = I18N[state.lang] || I18N.en;
         if (state.phrases.length >= 6) {
             showStudioMessage(t.studioMaxAlert, 'error');
@@ -2746,18 +2807,18 @@
         }
         if (!val) {
             showStudioMessage(t.studioEmptyAlert, 'error');
-            studioInp.focus();
+            inp.focus();
             return;
         }
         if (val.length >= 2) {
             state.phrases.push({ text: val, enabled: true });
             state.saveShared();
-            studioInp.value = '';
+            inp.value = '';
             renderStudioList();
             updateNextMsgPreview();
             showStudioMessage(t.studioSuccessAlert, 'success');
         }
-        studioInp.focus();
+        inp.focus();
     }
 
     if (studioAddBtn) {
@@ -2767,9 +2828,10 @@
         });
     }
 
-    if (studioInp) {
+    function bindStudioInpKeyEvents(el) {
+        if (!el) return;
         ['keydown', 'keyup', 'keypress'].forEach(evt => {
-            studioInp.addEventListener(evt, (e) => {
+            el.addEventListener(evt, (e) => {
                 e.stopPropagation();
                 if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
                 if (evt === 'keydown' && e.key === 'Enter') {
@@ -2778,6 +2840,10 @@
                 }
             }, true);
         });
+    }
+
+    if (studioInp) {
+        bindStudioInpKeyEvents(studioInp);
     }
 
     document.getElementById('cpj-phrase-list').addEventListener('click', async (e) => {
@@ -2990,7 +3056,7 @@
     isolateFromGame(modal);
     isolateFromGame(launcher);
 
-    // Interceptor global em fase de captura para blindagem total dos inputs
+    // Interceptor global em fase de captura para blindagem total dos inputs e modal escuro
     ['keydown', 'keyup', 'keypress'].forEach(type => {
         window.addEventListener(type, (e) => {
             if (e.target && e.target.closest && e.target.closest('#cpj-modal, .cpj-dark-prompt-overlay')) {
@@ -3001,6 +3067,8 @@
             }
         }, true);
     });
+
+
 
     // Atalho F9
     window.addEventListener('keydown', (e) => {

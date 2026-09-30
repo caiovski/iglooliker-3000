@@ -940,6 +940,7 @@
     gap: 6px !important;
     margin-bottom: 10px !important;
 }
+#cpj-inp-studio,
 .cpj-studio-input {
     flex: 1 !important;
     height: 34px !important;
@@ -951,7 +952,14 @@
     font-size: 12px !important;
     padding: 0 10px !important;
     outline: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    box-sizing: border-box !important;
 }
+#cpj-inp-studio:focus,
 .cpj-studio-input:focus { border-color: var(--cp-border-cyan) !important; }
 .cpj-btn-add {
     background: linear-gradient(180deg, #00c6ff 0%, #0072ff 100%) !important;
